@@ -14,73 +14,10 @@
     "lang": "zh"
   },
   {
-    "title": "Netflix",
-    "url": "https://www.netflix.com",
-    "image": "https://cdn-icons-png.flaticon.com/512/732/732228.png",
-    "desc": "全球领先的流媒体服务",
-    "lang": "en"
-  },
-  {
-    "title": "IQIYI",
-    "url": "https://www.iq.com",
-    "image": "https://cdn-icons-png.flaticon.com/512/732/732222.png",
-    "desc": "中国领先的在线视频平台",
-    "lang": "zh"
-  },
-  {
     "title": "Marry Again My Billionaire Ex",
     "url": "https://dramabox.onelink.me/dqUm/24ee28t1",
     "image": "https://raw.githubusercontent.com/loutasr/mylink_tmp/main/images/1.jpg",
     "desc": "A captivating drama about love, loss, and second chances",
     "lang": "en"
-  },
-  {
-    "title": "Youku",
-    "url": "https://www.youku.com",
-    "image": "https://cdn-icons-png.flaticon.com/512/732/732221.png",
-    "desc": "阿里巴巴旗下视频平台",
-    "lang": "zh"
-  },
-  {
-    "title": "Hulu",
-    "url": "https://www.hulu.com",
-    "image": "https://cdn-icons-png.flaticon.com/512/732/732225.png",
-    "desc": "美国热门流媒体服务",
-    "lang": "en"
-  },
-  {
-    "title": "Tencent Video",
-    "url": "https://v.qq.com",
-    "image": "https://cdn-icons-png.flaticon.com/512/732/732227.png",
-    "desc": "腾讯旗下视频平台",
-    "lang": "zh"
-  },
-  {
-    "title": "NHK",
-    "url": "https://www.nhk.or.jp",
-    "image": "https://cdn-icons-png.flaticon.com/512/841/841364.png",
-    "desc": "日本放送协会官方网站",
-    "lang": "ja"
-  },
-  {
-    "title": "KBS",
-    "url": "https://www.kbs.co.kr",
-    "image": "https://cdn-icons-png.flaticon.com/512/841/841358.png",
-    "desc": "韩国广播公司官方网站",
-    "lang": "ko"
-  },
-  {
-    "title": "RTVE",
-    "url": "https://www.rtve.es",
-    "image": "https://cdn-icons-png.flaticon.com/512/841/841362.png",
-    "desc": "西班牙国家广播电视台",
-    "lang": "es"
-  },
-  {
-    "title": "MBC",
-    "url": "https://www.mbc.net",
-    "image": "https://cdn-icons-png.flaticon.com/512/841/841359.png",
-    "desc": "中东广播中心",
-    "lang": "ar"
   }
 ]
