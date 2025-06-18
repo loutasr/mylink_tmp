@@ -18,6 +18,8 @@
             --border: #e2e8f0;
             --success: #10b981;
             --transition: all 0.3s ease;
+            --gradient-start: #1a1a2e;
+            --gradient-end: #16213e;
         }
 
         .dark-mode {
@@ -27,6 +29,8 @@
             --card-bg: #1e293b;
             --card-shadow: rgba(0, 0, 0, 0.2);
             --border: #334155;
+            --gradient-start: #0c0c1a;
+            --gradient-end: #0d1a30;
         }
 
         * {
@@ -43,7 +47,7 @@
             transition: var(--transition);
             min-height: 100vh;
             padding: 15px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             background-attachment: fixed;
         }
 
@@ -79,6 +83,12 @@
             justify-content: center;
             color: white;
             font-size: 2rem;
+            transition: var(--transition);
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(99, 102, 241, 0.4);
         }
 
         .name {
@@ -90,6 +100,7 @@
             color: transparent;
             margin-bottom: 5px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: var(--transition);
         }
 
         .bio {
@@ -97,6 +108,7 @@
             color: var(--text-light);
             max-width: 90%;
             margin: 0 auto 15px;
+            transition: var(--transition);
         }
 
         .search-container {
@@ -176,6 +188,7 @@
             padding-left: 12px;
             border-left: 4px solid var(--primary);
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            transition: var(--transition);
         }
 
         .link-card {
@@ -218,6 +231,12 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .link-image.loaded {
+            opacity: 1;
         }
 
         .link-card:hover .image-container {
@@ -373,8 +392,14 @@
 
         /* 图片加载动画 */
         .image-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
@@ -384,6 +409,13 @@
         @keyframes loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
+        }
+
+        .image-container.error .image-placeholder {
+            background: #f5f5f5;
+            animation: none;
+            color: #999;
+            font-size: 0.8rem;
         }
 
         /* 影视卡片装饰 */
@@ -520,7 +552,7 @@
             
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" class="search-box" placeholder="Search series to unlock full episodes...">
+                <input type="text" id="searchInput" class="search-box" placeholder="搜索剧名解锁全集...">
             </div>
         </header>
         
@@ -533,7 +565,7 @@
         </main>
         
         <footer class="footer">
-            <p id="footerText">© 2023 Movie & Drama Links | All Rights Reserved</p>
+            <p id="footerText">© 2023 影视资源库 | 保留所有权利</p>
         </footer>
     </div>
 
@@ -597,7 +629,7 @@
         };
         
         // 当前语言
-        let currentLang = 'en';
+        let currentLang = 'zh';
         // 当前筛选的语言
         let currentFilterLang = 'all';
         
@@ -684,9 +716,10 @@
                     card.innerHTML = `
                         <div class="image-container">
                             <img src="${link.image}" alt="${link.title}" class="link-image"
-                                 onload="this.style.opacity='1'"
-                                 onerror="this.onerror=null; this.src='https://via.placeholder.com/150?text=No+Image'; this.style.opacity='1'">
-                            <div class="image-placeholder" style="position: absolute; top:0; left:0; right:0; bottom:0;"></div>
+                                 data-title="${link.title}">
+                            <div class="image-placeholder">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
                         </div>
                         <div class="link-content">
                             <div class="link-title">${link.title}</div>
@@ -696,6 +729,29 @@
                     `;
                     
                     container.appendChild(card);
+                    
+                    // 添加图片加载处理
+                    const img = card.querySelector('.link-image');
+                    const placeholder = card.querySelector('.image-placeholder');
+                    
+                    // 图片加载成功处理
+                    img.onload = function() {
+                        this.classList.add('loaded');
+                        placeholder.style.display = 'none';
+                    };
+                    
+                    // 图片加载失败处理
+                    img.onerror = function() {
+                        placeholder.innerHTML = '<i class="fas fa-image"></i> Image';
+                        placeholder.classList.add('error');
+                        this.style.display = 'none';
+                    };
+                    
+                    // 如果图片已经在缓存中，立即显示
+                    if (img.complete) {
+                        img.classList.add('loaded');
+                        placeholder.style.display = 'none';
+                    }
                 });
             }
             
@@ -772,7 +828,7 @@
         // 初始加载
         document.addEventListener('DOMContentLoaded', function() {
             // 应用默认语言
-            applyLanguage('en');
+            applyLanguage('zh');
             
             // 加载链接数据
             loadAndRenderLinks();
