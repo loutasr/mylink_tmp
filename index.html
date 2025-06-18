@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的可搜索Linktree</title>
+    <title>Multilingual Linktree</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -43,7 +43,6 @@
             transition: var(--transition);
             min-height: 100vh;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
         }
 
         .container {
@@ -273,27 +272,172 @@
             border-radius: 4px;
         }
 
-        .setup-instructions {
-            background: white;
-            border-radius: 12px;
+        /* 管理员面板样式 */
+        .admin-panel {
+            background: var(--card-bg);
+            border-radius: 16px;
             padding: 25px;
             margin: 30px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-left: 4px solid var(--primary);
+            box-shadow: 0 4px 6px -1px var(--card-shadow);
+            border: 1px solid var(--border);
+            display: none;
         }
         
-        .setup-instructions h3 {
+        .admin-panel h2 {
             margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .icon-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .icon-option {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .icon-option:hover, .icon-option.selected {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .admin-toggle {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        /* 语言切换器 */
+        .language-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0 25px;
+        }
+        
+        .lang-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .lang-btn:hover, .lang-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* 密码保护 */
+        .password-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .password-form {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .password-form h3 {
+            margin-bottom: 20px;
             color: var(--primary);
         }
         
-        .setup-instructions ol {
-            padding-left: 20px;
-            margin: 15px 0;
-        }
-        
-        .setup-instructions li {
-            margin-bottom: 10px;
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
         }
 
         @media (min-width: 768px) {
@@ -310,265 +454,513 @@
                 left: 25px;
                 font-size: 1.4rem;
             }
+            
+            .admin-panel {
+                padding: 30px;
+            }
+            
+            .lang-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 密码保护屏幕 -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-form">
+            <h3><i class="fas fa-lock"></i> Admin Access</h3>
+            <p>Enter the admin password to manage links</p>
+            <input type="password" id="adminPassword" class="password-input" placeholder="Enter password">
+            <button class="btn" id="passwordSubmit">Submit</button>
+            <p id="passwordError" style="color: #ef4444; margin-top: 10px; display: none;">
+                <i class="fas fa-exclamation-circle"></i> Incorrect password
+            </p>
+        </div>
+    </div>
+    
     <div class="container">
+        <div class="admin-toggle" id="adminToggle" style="display: none;">
+            <i class="fas fa-cog"></i>
+        </div>
+        
         <header>
             <div class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i>
             </div>
             
             <div class="profile">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="个人头像" class="avatar">
-                <h1 class="name">我的Linktree</h1>
-                <p class="bio">欢迎访问我的个人链接页面！使用搜索功能快速查找内容</p>
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Profile" class="avatar">
+                <h1 class="name" id="siteTitle">Multilingual Linktree</h1>
+                <p class="bio" id="siteDescription">All your links in one place</p>
+            </div>
+            
+            <!-- 语言切换器 -->
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="en">English</button>
+                <button class="lang-btn" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="ja">日本語</button>
+                <button class="lang-btn" data-lang="ko">한국어</button>
+                <button class="lang-btn" data-lang="es">Español</button>
+                <button class="lang-btn" data-lang="ar">العربية</button>
             </div>
             
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" class="search-box" placeholder="搜索链接、类别或描述...">
+                <input type="text" id="searchInput" class="search-box" placeholder="Search links...">
             </div>
             
             <div class="filters" id="filters">
-                <button class="filter-btn active" data-filter="all">全部</button>
-                <button class="filter-btn" data-filter="social">社交媒体</button>
-                <button class="filter-btn" data-filter="portfolio">作品集</button>
-                <button class="filter-btn" data-filter="blog">博客</button>
-                <button class="filter-btn" data-filter="resource">资源</button>
+                <button class="filter-btn active" data-filter="all">All Languages</button>
+                <button class="filter-btn" data-filter="en">English</button>
+                <button class="filter-btn" data-filter="zh">中文</button>
+                <button class="filter-btn" data-filter="ja">日本語</button>
+                <button class="filter-btn" data-filter="ko">한국어</button>
+                <button class="filter-btn" data-filter="es">Español</button>
+                <button class="filter-btn" data-filter="ar">العربية</button>
             </div>
         </header>
         
-        <div class="setup-instructions">
-            <h3>使用指南</h3>
-            <ol>
-                <li><strong>保存文件</strong>：将本页面另存为HTML文件（右键 > 另存为）</li>
-                <li><strong>自定义内容</strong>：用文本编辑器打开文件，修改以下部分：
-                    <ul style="margin-top: 8px; padding-left: 20px;">
-                        <li>头像图片URL（搜索"https://images.unsplash.com"替换）</li>
-                        <li>名字（搜索"我的Linktree"替换）</li>
-                        <li>描述（搜索"欢迎访问..."替换）</li>
-                        <li>链接（搜索"https://weibo.com"等替换）</li>
-                    </ul>
-                </li>
-                <li><strong>添加链接</strong>：复制链接卡片HTML代码块，修改URL和描述</li>
-                <li><strong>搜索功能</strong>：在顶部搜索框输入关键词可筛选链接</li>
-                <li><strong>暗色模式</strong>：点击右上角月亮/太阳图标切换主题</li>
-            </ol>
+        <!-- 管理员面板 - 默认隐藏 -->
+        <div class="admin-panel" id="adminPanel">
+            <h2><i class="fas fa-user-shield"></i> Admin Panel</h2>
+            
+            <div class="form-group">
+                <label for="linkTitle">Link Title</label>
+                <input type="text" id="linkTitle" class="form-control" placeholder="e.g. My Blog">
+            </div>
+            
+            <div class="form-group">
+                <label for="linkUrl">Link URL</label>
+                <input type="url" id="linkUrl" class="form-control" placeholder="https://example.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="linkDescription">Description</label>
+                <input type="text" id="linkDescription" class="form-control" placeholder="Short description">
+            </div>
+            
+            <div class="form-group">
+                <label>Select Icon</label>
+                <div class="icon-selector" id="iconSelector">
+                    <div class="icon-option selected" data-icon="fa-globe"><i class="fas fa-globe"></i></div>
+                    <div class="icon-option" data-icon="fa-envelope"><i class="fas fa-envelope"></i></div>
+                    <div class="icon-option" data-icon="fa-camera"><i class="fas fa-camera"></i></div>
+                    <div class="icon-option" data-icon="fa-music"><i class="fas fa-music"></i></div>
+                    <div class="icon-option" data-icon="fa-video"><i class="fas fa-video"></i></div>
+                    <div class="icon-option" data-icon="fa-book"><i class="fas fa-book"></i></div>
+                    <div class="icon-option" data-icon="fa-shopping-cart"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="icon-option" data-icon="fa-gift"><i class="fas fa-gift"></i></div>
+                </div>
+                <input type="hidden" id="selectedIcon" value="fa-globe">
+            </div>
+            
+            <div class="form-group">
+                <label for="linkLanguage">Language</label>
+                <select id="linkLanguage" class="form-control">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="es">Español</option>
+                    <option value="ar">العربية</option>
+                </select>
+            </div>
+            
+            <button class="btn" id="addLinkBtn"><i class="fas fa-plus"></i> Add Link</button>
+            <button class="btn" id="saveDataBtn" style="background: #10b981; margin-left: 10px;">
+                <i class="fas fa-save"></i> Save Data
+            </button>
         </div>
         
         <main>
             <div class="links-container" id="linksContainer">
-                <h2 class="category-title" data-category="social">社交媒体</h2>
-                <a href="https://weibo.com" class="link-card" data-category="social">
-                    <div class="link-icon">
-                        <i class="fab fa-weibo"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">微博</div>
-                        <div class="link-desc">关注我的日常分享和最新动态</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <a href="https://zhihu.com" class="link-card" data-category="social">
-                    <div class="link-icon">
-                        <i class="fab fa-zhihu"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">知乎</div>
-                        <div class="link-desc">阅读我的技术见解和问题解答</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <a href="https://bilibili.com" class="link-card" data-category="social">
-                    <div class="link-icon">
-                        <i class="fab fa-bilibili"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">B站</div>
-                        <div class="link-desc">观看我的编程教程和项目演示</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <h2 class="category-title" data-category="portfolio">作品集</h2>
-                <a href="https://github.com" class="link-card" data-category="portfolio">
-                    <div class="link-icon">
-                        <i class="fab fa-github"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">GitHub</div>
-                        <div class="link-desc">查看我的开源项目和代码仓库</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <a href="https://dribbble.com" class="link-card" data-category="portfolio">
-                    <div class="link-icon">
-                        <i class="fab fa-dribbble"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">Dribbble</div>
-                        <div class="link-desc">浏览我的UI/UX设计作品</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <h2 class="category-title" data-category="blog">博客</h2>
-                <a href="https://juejin.cn" class="link-card" data-category="blog">
-                    <div class="link-icon">
-                        <i class="fab fa-blogger"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">掘金博客</div>
-                        <div class="link-desc">阅读我的技术文章和开发心得</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <a href="https://medium.com" class="link-card" data-category="blog">
-                    <div class="link-icon">
-                        <i class="fab fa-medium"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">Medium</div>
-                        <div class="link-desc">关注我的英文技术博客</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <h2 class="category-title" data-category="resource">资源</h2>
-                <a href="https://figma.com" class="link-card" data-category="resource">
-                    <div class="link-icon">
-                        <i class="fab fa-figma"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">Figma资源</div>
-                        <div class="link-desc">获取我分享的设计资源文件</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <a href="https://notion.so" class="link-card" data-category="resource">
-                    <div class="link-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">学习笔记</div>
-                        <div class="link-desc">访问我的知识库和学习资源</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <a href="https://codepen.io" class="link-card" data-category="resource">
-                    <div class="link-icon">
-                        <i class="fab fa-codepen"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">CodePen合集</div>
-                        <div class="link-desc">探索我的前端代码片段和实验</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
-                
-                <!-- 添加新链接的模板 -->
-                <h2 class="category-title" data-category="new">新类别</h2>
-                <a href="https://example.com" class="link-card" data-category="new">
-                    <div class="link-icon">
-                        <i class="fas fa-plus"></i>
-                    </div>
-                    <div class="link-content">
-                        <div class="link-title">新链接</div>
-                        <div class="link-desc">在此添加链接描述</div>
-                    </div>
-                    <i class="fas fa-arrow-right link-arrow"></i>
-                </a>
+                <!-- 链接将动态加载 -->
             </div>
         </main>
         
         <footer class="footer">
-            <p>© 2023 我的可搜索Linktree | 按名称或类别搜索你的链接</p>
+            <p>© 2023 Multilingual Linktree | All rights reserved</p>
         </footer>
     </div>
 
     <script>
-        // 主题切换功能
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
-        
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            const icon = themeToggle.querySelector('i');
-            if (body.classList.contains('dark-mode')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
+        // 多语言文本
+        const translations = {
+            en: {
+                siteTitle: "Multilingual Linktree",
+                siteDescription: "All your links in one place",
+                searchPlaceholder: "Search links...",
+                allLanguages: "All Languages",
+                addLink: "Add Link",
+                saveData: "Save Data",
+                linkTitle: "Link Title",
+                linkUrl: "Link URL",
+                description: "Description",
+                selectIcon: "Select Icon",
+                language: "Language",
+                adminPanel: "Admin Panel",
+                footer: "© 2023 Multilingual Linktree | All rights reserved"
+            },
+            zh: {
+                siteTitle: "多语言链接树",
+                siteDescription: "您所有的链接都在一个地方",
+                searchPlaceholder: "搜索链接...",
+                allLanguages: "所有语言",
+                addLink: "添加链接",
+                saveData: "保存数据",
+                linkTitle: "链接标题",
+                linkUrl: "链接地址",
+                description: "描述",
+                selectIcon: "选择图标",
+                language: "语言",
+                adminPanel: "管理面板",
+                footer: "© 2023 多语言链接树 | 保留所有权利"
+            },
+            ja: {
+                siteTitle: "多言語リンクツリー",
+                siteDescription: "すべてのリンクを1か所に",
+                searchPlaceholder: "リンクを検索...",
+                allLanguages: "すべての言語",
+                addLink: "リンクを追加",
+                saveData: "データを保存",
+                linkTitle: "リンクタイトル",
+                linkUrl: "リンクURL",
+                description: "説明",
+                selectIcon: "アイコンを選択",
+                language: "言語",
+                adminPanel: "管理者パネル",
+                footer: "© 2023 多言語リンクツリー | 全著作権所有"
+            },
+            ko: {
+                siteTitle: "다국어 링크트리",
+                siteDescription: "모든 링크를 한 곳에서",
+                searchPlaceholder: "링크 검색...",
+                allLanguages: "모든 언어",
+                addLink: "링크 추가",
+                saveData: "데이터 저장",
+                linkTitle: "링크 제목",
+                linkUrl: "링크 URL",
+                description: "설명",
+                selectIcon: "아이콘 선택",
+                language: "언어",
+                adminPanel: "관리자 패널",
+                footer: "© 2023 다국어 링크트리 | 모든 권리 보유"
+            },
+            es: {
+                siteTitle: "Linktree Multilingüe",
+                siteDescription: "Todos tus enlaces en un solo lugar",
+                searchPlaceholder: "Buscar enlaces...",
+                allLanguages: "Todos los idiomas",
+                addLink: "Agregar enlace",
+                saveData: "Guardar datos",
+                linkTitle: "Título del enlace",
+                linkUrl: "URL del enlace",
+                description: "Descripción",
+                selectIcon: "Seleccionar icono",
+                language: "Idioma",
+                adminPanel: "Panel de administración",
+                footer: "© 2023 Linktree Multilingüe | Todos los derechos reservados"
+            },
+            ar: {
+                siteTitle: "شجرة الروابط متعددة اللغات",
+                siteDescription: "كل روابطك في مكان واحد",
+                searchPlaceholder: "ابحث عن الروابط...",
+                allLanguages: "جميع اللغات",
+                addLink: "إضافة رابط",
+                saveData: "حفظ البيانات",
+                linkTitle: "عنوان الرابط",
+                linkUrl: "رابط URL",
+                description: "الوصف",
+                selectIcon: "اختر أيقونة",
+                language: "اللغة",
+                adminPanel: "لوحة الإدارة",
+                footer: "© 2023 شجرة الروابط متعددة اللغات | جميع الحقوق محفوظة"
             }
+        };
+        
+        // 存储链接数据
+        let linksData = JSON.parse(localStorage.getItem('multilingualLinks')) || [
+            {
+                title: "GitHub",
+                url: "https://github.com",
+                icon: "fa-github",
+                desc: "My coding projects",
+                lang: "en"
+            },
+            {
+                title: "微博",
+                url: "https://weibo.com",
+                icon: "fa-weibo",
+                desc: "我的社交媒体",
+                lang: "zh"
+            }
+        ];
+        
+        // 当前语言
+        let currentLang = 'en';
+        const ADMIN_PASSWORD = "admin123"; // 管理员密码
+        
+        // 渲染所有链接
+        function renderLinks() {
+            const container = document.getElementById('linksContainer');
+            container.innerHTML = '';
+            
+            // 按语言分组
+            const languages = {};
+            
+            linksData.forEach(link => {
+                if (!languages[link.lang]) {
+                    languages[link.lang] = [];
+                }
+                languages[link.lang].push(link);
+            });
+            
+            // 渲染每种语言
+            for (const lang in languages) {
+                // 添加语言标题
+                const title = document.createElement('h2');
+                title.className = 'category-title';
+                title.dataset.lang = lang;
+                
+                // 根据语言显示标题
+                if (lang === 'en') title.textContent = 'English';
+                if (lang === 'zh') title.textContent = '中文';
+                if (lang === 'ja') title.textContent = '日本語';
+                if (lang === 'ko') title.textContent = '한국어';
+                if (lang === 'es') title.textContent = 'Español';
+                if (lang === 'ar') title.textContent = 'العربية';
+                
+                container.appendChild(title);
+                
+                // 添加该语言下的链接
+                languages[lang].forEach(link => {
+                    const card = document.createElement('a');
+                    card.className = 'link-card';
+                    card.href = link.url;
+                    card.dataset.lang = link.lang;
+                    card.target = '_blank';
+                    
+                    card.innerHTML = `
+                        <div class="link-icon">
+                            <i class="fab ${link.icon}"></i>
+                        </div>
+                        <div class="link-content">
+                            <div class="link-title">${link.title}</div>
+                            <div class="link-desc">${link.desc}</div>
+                        </div>
+                        <i class="fas fa-arrow-right link-arrow"></i>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            }
+            
+            // 如果没有链接，显示提示
+            if (linksData.length === 0) {
+                const noLinks = document.createElement('div');
+                noLinks.className = 'no-results';
+                noLinks.innerHTML = `
+                    <i class="fas fa-plus-circle fa-3x" style="margin-bottom: 20px;"></i>
+                    <h3>${currentLang === 'en' ? 'No links added yet' : '尚未添加链接'}</h3>
+                    <p>${currentLang === 'en' ? 'Add your first link using the admin panel' : '使用管理面板添加您的第一个链接'}</p>
+                `;
+                container.appendChild(noLinks);
+            }
+            
+            // 保存到本地存储
+            localStorage.setItem('multilingualLinks', JSON.stringify(linksData));
+        }
+        
+        // 应用语言设置
+        function applyLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+            
+            // 更新界面文本
+            document.getElementById('siteTitle').textContent = t.siteTitle;
+            document.getElementById('siteDescription').textContent = t.siteDescription;
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('linkTitle').placeholder = t.linkTitle;
+            document.getElementById('linkUrl').placeholder = t.linkUrl;
+            document.getElementById('linkDescription').placeholder = t.description;
+            document.querySelector('label[for="linkTitle"]').textContent = t.linkTitle;
+            document.querySelector('label[for="linkUrl"]').textContent = t.linkUrl;
+            document.querySelector('label[for="linkDescription"]').textContent = t.description;
+            document.querySelector('label[for="linkLanguage"]').textContent = t.language;
+            document.querySelector('#adminPanel h2').innerHTML = `<i class="fas fa-user-shield"></i> ${t.adminPanel}`;
+            document.getElementById('addLinkBtn').innerHTML = `<i class="fas fa-plus"></i> ${t.addLink}`;
+            document.getElementById('saveDataBtn').innerHTML = `<i class="fas fa-save"></i> ${t.saveData}`;
+            document.querySelector('.footer p').textContent = t.footer;
+            
+            // 更新"所有语言"按钮
+            document.querySelector('.filter-btn[data-filter="all"]').textContent = t.allLanguages;
+            
+            // 重新渲染链接
+            renderLinks();
+        }
+        
+        // 初始加载
+        document.addEventListener('DOMContentLoaded', function() {
+            // 应用默认语言
+            applyLanguage('en');
+            
+            // 主题切换功能
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                
+                const icon = themeToggle.querySelector('i');
+                if (body.classList.contains('dark-mode')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+            
+            // 搜索功能
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            
+            searchInput.addEventListener('input', filterLinks);
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    filterLinks();
+                });
+            });
+            
+            // 语言切换
+            const langButtons = document.querySelectorAll('.lang-btn');
+            langButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    langButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const lang = button.dataset.lang;
+                    applyLanguage(lang);
+                });
+            });
+            
+            // 管理员功能
+            const adminToggle = document.getElementById('adminToggle');
+            const adminPanel = document.getElementById('adminPanel');
+            const passwordScreen = document.getElementById('passwordScreen');
+            const passwordInput = document.getElementById('adminPassword');
+            const passwordSubmit = document.getElementById('passwordSubmit');
+            const passwordError = document.getElementById('passwordError');
+            
+            // 检查管理员状态
+            if (localStorage.getItem('isAdmin') === 'true') {
+                passwordScreen.style.display = 'none';
+                adminToggle.style.display = 'flex';
+            }
+            
+            // 密码提交
+            passwordSubmit.addEventListener('click', () => {
+                if (passwordInput.value === ADMIN_PASSWORD) {
+                    passwordScreen.style.display = 'none';
+                    adminToggle.style.display = 'flex';
+                    localStorage.setItem('isAdmin', 'true');
+                } else {
+                    passwordError.style.display = 'block';
+                    passwordInput.value = '';
+                }
+            });
+            
+            // 管理员面板切换
+            adminToggle.addEventListener('click', () => {
+                if (adminPanel.style.display === 'none') {
+                    adminPanel.style.display = 'block';
+                    adminToggle.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    adminPanel.style.display = 'none';
+                    adminToggle.innerHTML = '<i class="fas fa-cog"></i>';
+                }
+            });
+            
+            // 图标选择功能
+            const iconOptions = document.querySelectorAll('.icon-option');
+            const selectedIconInput = document.getElementById('selectedIcon');
+            
+            iconOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    iconOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedIconInput.value = option.dataset.icon;
+                });
+            });
+            
+            // 添加新链接
+            const addLinkBtn = document.getElementById('addLinkBtn');
+            
+            addLinkBtn.addEventListener('click', () => {
+                const title = document.getElementById('linkTitle').value;
+                const url = document.getElementById('linkUrl').value;
+                const desc = document.getElementById('linkDescription').value;
+                const icon = selectedIconInput.value;
+                const lang = document.getElementById('linkLanguage').value;
+                
+                if (!title || !url) {
+                    alert(currentLang === 'en' ? 'Please fill in title and URL' : '请填写标题和链接地址');
+                    return;
+                }
+                
+                // 添加新链接
+                linksData.push({
+                    title,
+                    url,
+                    icon,
+                    desc: desc || (currentLang === 'en' ? 'New link' : '新链接'),
+                    lang
+                });
+                
+                // 重新渲染
+                renderLinks();
+                
+                // 清空表单
+                document.getElementById('linkTitle').value = '';
+                document.getElementById('linkUrl').value = '';
+                document.getElementById('linkDescription').value = '';
+                
+                alert(currentLang === 'en' ? 'Link added successfully!' : '链接添加成功！');
+            });
+            
+            // 保存数据按钮
+            document.getElementById('saveDataBtn').addEventListener('click', () => {
+                localStorage.setItem('multilingualLinks', JSON.stringify(linksData));
+                alert(currentLang === 'en' ? 'Data saved successfully!' : '数据保存成功！');
+            });
         });
-        
-        // 搜索功能
-        const searchInput = document.getElementById('searchInput');
-        const linkCards = document.querySelectorAll('.link-card');
-        const categoryTitles = document.querySelectorAll('.category-title');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        
-        // 高亮匹配文本
-        function highlightText(element, searchTerm) {
-            const text = element.textContent;
-            const regex = new RegExp(searchTerm, 'gi');
-            const highlightedText = text.replace(regex, match => `<span class="highlight">${match}</span>`);
-            element.innerHTML = highlightedText;
-        }
-        
-        // 移除高亮
-        function removeHighlight(element) {
-            const text = element.textContent;
-            element.innerHTML = text;
-        }
         
         // 过滤和搜索功能
         function filterLinks() {
-            const searchTerm = searchInput.value.toLowerCase();
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            
+            const linkCards = document.querySelectorAll('.link-card');
+            const categoryTitles = document.querySelectorAll('.category-title');
+            
             let visibleItems = 0;
-            let lastCategory = null;
-            let categoryHasVisibleItems = false;
             
             // 处理链接卡片
             linkCards.forEach(card => {
                 const title = card.querySelector('.link-title').textContent.toLowerCase();
                 const desc = card.querySelector('.link-desc').textContent.toLowerCase();
-                const category = card.dataset.category;
+                const lang = card.dataset.lang;
                 
-                const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || category.includes(searchTerm);
-                const matchesFilter = activeFilter === 'all' || category === activeFilter;
+                const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || lang.includes(searchTerm);
+                const matchesFilter = activeFilter === 'all' || lang === activeFilter;
                 
                 if (matchesSearch && matchesFilter) {
                     card.style.display = 'flex';
                     visibleItems++;
-                    
-                    // 高亮匹配文本
-                    if (searchTerm) {
-                        highlightText(card.querySelector('.link-title'), searchTerm);
-                        highlightText(card.querySelector('.link-desc'), searchTerm);
-                    } else {
-                        removeHighlight(card.querySelector('.link-title'));
-                        removeHighlight(card.querySelector('.link-desc'));
-                    }
-                    
-                    // 处理分类标题
-                    const categoryTitle = document.querySelector(`.category-title[data-category="${category}"]`);
-                    if (categoryTitle && lastCategory !== category) {
-                        categoryTitle.style.display = 'block';
-                        lastCategory = category;
-                        categoryHasVisibleItems = true;
-                    }
                 } else {
                     card.style.display = 'none';
                 }
@@ -576,19 +968,13 @@
             
             // 处理分类标题
             categoryTitles.forEach(title => {
-                const category = title.dataset.category;
-                const hasVisibleCards = [...linkCards].some(card => {
-                    return card.dataset.category === category && 
-                           card.style.display !== 'none';
+                const lang = title.dataset.lang;
+                const hasVisibleCards = Array.from(linkCards).some(card => {
+                    return card.dataset.lang === lang && card.style.display !== 'none';
                 });
                 
                 if (hasVisibleCards) {
                     title.style.display = 'block';
-                    if (searchTerm) {
-                        highlightText(title, searchTerm);
-                    } else {
-                        removeHighlight(title);
-                    }
                 } else {
                     title.style.display = 'none';
                 }
@@ -596,36 +982,17 @@
             
             // 显示无结果消息
             const noResults = document.querySelector('.no-results');
-            if (!noResults) {
-                if (visibleItems === 0) {
-                    const noResultsDiv = document.createElement('div');
-                    noResultsDiv.className = 'no-results';
-                    noResultsDiv.innerHTML = `<i class="fas fa-search fa-2x" style="margin-bottom: 15px;"></i>
-                                              <h3>未找到匹配的链接</h3>
-                                              <p>请尝试其他搜索词或切换类别</p>`;
-                    document.getElementById('linksContainer').appendChild(noResultsDiv);
-                }
-            } else {
-                if (visibleItems > 0) {
-                    noResults.remove();
-                }
+            if (!noResults && visibleItems === 0) {
+                const noResultsDiv = document.createElement('div');
+                noResultsDiv.className = 'no-results';
+                noResultsDiv.innerHTML = `<i class="fas fa-search fa-2x" style="margin-bottom: 15px;"></i>
+                                          <h3>${currentLang === 'en' ? 'No matching links found' : '未找到匹配的链接'}</h3>
+                                          <p>${currentLang === 'en' ? 'Try a different search term or change the language filter' : '请尝试其他搜索词或切换语言筛选'}</p>`;
+                document.getElementById('linksContainer').appendChild(noResultsDiv);
+            } else if (noResults && visibleItems > 0) {
+                noResults.remove();
             }
         }
-        
-        // 类别过滤
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                filterLinks();
-            });
-        });
-        
-        // 事件监听
-        searchInput.addEventListener('input', filterLinks);
-        
-        // 初始过滤
-        filterLinks();
     </script>
 </body>
 </html>
