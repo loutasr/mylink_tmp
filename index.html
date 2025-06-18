@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>多语言链接树 | Multilingual Linktree</title>
+    <title>影视资源库 | Movie & Drama Links</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -43,7 +43,8 @@
             transition: var(--transition);
             min-height: 100vh;
             padding: 15px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background-attachment: fixed;
         }
 
         .container {
@@ -71,7 +72,13 @@
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid var(--primary);
-            box-shadow: 0 6px 10px -4px var(--card-shadow);
+            box-shadow: 0 6px 10px -4px rgba(99, 102, 241, 0.3);
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
         }
 
         .name {
@@ -82,6 +89,7 @@
             background-clip: text;
             color: transparent;
             margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .bio {
@@ -105,14 +113,14 @@
             background: var(--card-bg);
             font-size: 1rem;
             color: var(--text);
-            box-shadow: 0 2px 5px -1px var(--card-shadow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: var(--transition);
         }
 
         .search-box:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         .search-icon {
@@ -141,12 +149,15 @@
             cursor: pointer;
             font-size: 0.85rem;
             transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .filter-btn:hover, .filter-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
         }
 
         .links-container {
@@ -164,6 +175,7 @@
             margin: 25px 0 10px;
             padding-left: 12px;
             border-left: 4px solid var(--primary);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .link-card {
@@ -172,31 +184,36 @@
             padding: 16px;
             border-radius: 14px;
             background: var(--card-bg);
-            box-shadow: 0 3px 5px -1px var(--card-shadow);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
             transition: var(--transition);
             border: 1px solid var(--border);
             text-decoration: none;
             color: var(--text);
+            overflow: hidden;
+            position: relative;
         }
 
         .link-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 10px -2px var(--card-shadow);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
             border-color: var(--primary);
         }
 
-        .link-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .link-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
             margin-right: 15px;
             flex-shrink: 0;
-            color: white;
-            font-size: 1.3rem;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+
+        .link-card:hover .link-image {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .link-content {
@@ -211,14 +228,16 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--primary);
         }
 
         .link-desc {
             color: var(--text-light);
             font-size: 0.85rem;
-            white-space: nowrap;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .link-arrow {
@@ -231,7 +250,7 @@
 
         .link-card:hover .link-arrow {
             color: var(--primary);
-            transform: translateX(3px);
+            transform: translateX(5px);
         }
 
         .no-results {
@@ -240,6 +259,9 @@
             color: var(--text-light);
             font-size: 1rem;
             grid-column: 1 / -1;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            margin-top: 20px;
         }
 
         .theme-toggle {
@@ -255,7 +277,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 6px -1px var(--card-shadow);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: var(--transition);
             color: var(--text-light);
             font-size: 1.3rem;
@@ -263,9 +285,10 @@
         }
 
         .theme-toggle:hover {
-            transform: rotate(15deg);
+            transform: rotate(15deg) scale(1.1);
             border-color: var(--primary);
             color: var(--primary);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
         }
 
         .footer {
@@ -273,8 +296,8 @@
             color: var(--text-light);
             font-size: 0.8rem;
             padding: 15px;
-            border-top: 1px solid var(--border);
             margin-top: 15px;
+            opacity: 0.8;
         }
 
         .highlight {
@@ -289,23 +312,33 @@
             flex-wrap: wrap;
             justify-content: center;
             gap: 8px;
-            margin: 12px 0 20px;
+            margin: 15px 0 20px;
         }
         
         .lang-btn {
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 8px 15px;
+            border-radius: 50px;
             background: var(--card-bg);
             border: 1px solid var(--border);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         
         .lang-btn:hover, .lang-btn.active {
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+        }
+        
+        .lang-flag {
+            font-size: 1.1rem;
         }
 
         /* 加载动画 */
@@ -329,25 +362,21 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 管理提示 */
-        .admin-hint {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: center;
-            font-size: 0.9rem;
-            border-left: 4px solid var(--success);
+        /* 影视卡片装饰 */
+        .link-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
-        .admin-hint a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .admin-hint a:hover {
-            text-decoration: underline;
+        .link-card:hover::before {
+            opacity: 1;
         }
 
         /* 移动设备优化 */
@@ -359,6 +388,7 @@
             .avatar {
                 width: 110px;
                 height: 110px;
+                font-size: 2.5rem;
             }
             
             .name {
@@ -379,14 +409,14 @@
             }
             
             .lang-btn {
-                padding: 7px 14px;
-                font-size: 0.85rem;
+                padding: 8px 16px;
+                font-size: 0.9rem;
             }
         }
         
         @media (min-width: 768px) {
             .links-container {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
                 gap: 18px;
             }
             
@@ -414,6 +444,11 @@
                 right: 20px;
                 bottom: auto;
             }
+            
+            .link-image {
+                width: 70px;
+                height: 70px;
+            }
         }
     </style>
 </head>
@@ -425,38 +460,47 @@
             </div>
             
             <div class="profile">
-                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Profile" class="avatar">
-                <h1 class="name" id="siteTitle">多语言链接树</h1>
-                <p class="bio" id="siteDescription">您所有的链接都在一个地方</p>
+                <div class="avatar">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h1 class="name" id="siteTitle">影视资源库</h1>
+                <p class="bio" id="siteDescription">热门剧集与影视资源一站式获取</p>
             </div>
             
             <!-- 语言切换器 -->
             <div class="language-switcher">
-                <button class="lang-btn active" data-lang="zh">中文</button>
-                <button class="lang-btn" data-lang="en">English</button>
-                <button class="lang-btn" data-lang="ja">日本語</button>
-                <button class="lang-btn" data-lang="ko">한국어</button>
-                <button class="lang-btn" data-lang="es">Español</button>
-                <button class="lang-btn" data-lang="ar">العربية</button>
+                <button class="lang-btn active" data-lang="en">
+                    <span class="lang-flag">🇺🇸</span> English
+                </button>
+                <button class="lang-btn" data-lang="zh">
+                    <span class="lang-flag">🇨🇳</span> 中文
+                </button>
+                <button class="lang-btn" data-lang="ja">
+                    <span class="lang-flag">🇯🇵</span> 日本語
+                </button>
+                <button class="lang-btn" data-lang="ko">
+                    <span class="lang-flag">🇰🇷</span> 한국어
+                </button>
+                <button class="lang-btn" data-lang="es">
+                    <span class="lang-flag">🇪🇸</span> Español
+                </button>
+                <button class="lang-btn" data-lang="ar">
+                    <span class="lang-flag">🇸🇦</span> العربية
+                </button>
             </div>
             
             <div class="search-container">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" class="search-box" placeholder="搜索链接...">
+                <input type="text" id="searchInput" class="search-box" placeholder="Search series to unlock full episodes...">
             </div>
             
             <div class="filters" id="filters">
-                <button class="filter-btn active" data-filter="all">所有语言</button>
-                <button class="filter-btn" data-filter="zh">中文</button>
-                <button class="filter-btn" data-filter="en">English</button>
-                <button class="filter-btn" data-filter="ja">日本語</button>
-                <button class="filter-btn" data-filter="ko">한국어</button>
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="drama">Dramas</button>
+                <button class="filter-btn" data-filter="movie">Movies</button>
+                <button class="filter-btn" data-filter="variety">Variety Shows</button>
             </div>
         </header>
-        
-        <div class="admin-hint">
-            <p><i class="fas fa-info-circle"></i> 管理员提示：通过更新 <a href="https://github.com/yourusername/yourrepo/blob/main/data.json" target="_blank">data.json</a> 文件添加新链接</p>
-        </div>
         
         <main>
             <div class="links-container" id="linksContainer">
@@ -467,7 +511,7 @@
         </main>
         
         <footer class="footer">
-            <p id="footerText">© 2023 多语言链接树 | 保留所有权利</p>
+            <p id="footerText">© 2023 Movie & Drama Links | All Rights Reserved</p>
         </footer>
     </div>
 
@@ -475,105 +519,101 @@
         // 多语言文本
         const translations = {
             en: {
-                siteTitle: "Multilingual Linktree",
-                siteDescription: "All your links in one place",
-                searchPlaceholder: "Search links...",
-                allLanguages: "All Languages",
-                zh: "Chinese",
-                en: "English",
-                ja: "Japanese",
-                ko: "Korean",
-                es: "Spanish",
-                ar: "Arabic",
-                footer: "© 2023 Multilingual Linktree | All rights reserved",
-                noResults: "No matching links found",
-                tryAgain: "Try a different search term or change the language filter",
-                adminHint: "Admin tip: Add new links by updating the "
+                siteTitle: "Movie & Drama Library",
+                siteDescription: "One-stop access to popular series and film resources",
+                all: "All",
+                drama: "Dramas",
+                movie: "Movies",
+                variety: "Variety Shows",
+                footer: "© 2023 Movie & Drama Links | All Rights Reserved",
+                noResults: "No matching resources found",
+                tryAgain: "Try a different search term",
+                searchPrompt: "Search series to unlock full episodes...",
+                popular: "Popular Now",
+                trending: "Trending Series",
+                classic: "Classic Collections"
             },
             zh: {
-                siteTitle: "多语言链接树",
-                siteDescription: "您所有的链接都在一个地方",
-                searchPlaceholder: "搜索链接...",
-                allLanguages: "所有语言",
-                zh: "中文",
-                en: "英语",
-                ja: "日语",
-                ko: "韩语",
-                es: "西班牙语",
-                ar: "阿拉伯语",
-                footer: "© 2023 多语言链接树 | 保留所有权利",
-                noResults: "未找到匹配的链接",
-                tryAgain: "请尝试其他搜索词或切换语言筛选",
-                adminHint: "管理员提示：通过更新 "
+                siteTitle: "影视资源库",
+                siteDescription: "热门剧集与影视资源一站式获取",
+                all: "全部",
+                drama: "电视剧",
+                movie: "电影",
+                variety: "综艺节目",
+                footer: "© 2023 影视资源库 | 保留所有权利",
+                noResults: "未找到匹配的资源",
+                tryAgain: "请尝试其他搜索词",
+                searchPrompt: "搜索剧名解锁全集...",
+                popular: "热门推荐",
+                trending: "热播剧集",
+                classic: "经典收藏"
             },
             ja: {
-                siteTitle: "多言語リンクツリー",
-                siteDescription: "すべてのリンクを1か所に",
-                searchPlaceholder: "リンクを検索...",
-                allLanguages: "すべての言語",
-                zh: "中国語",
-                en: "英語",
-                ja: "日本語",
-                ko: "韓国語",
-                es: "スペイン語",
-                ar: "アラビア語",
-                footer: "© 2023 多言語リンクツリー | 全著作権所有",
-                noResults: "一致するリンクが見つかりません",
-                tryAgain: "別の検索語を試すか、言語フィルターを変更してください",
-                adminHint: "管理者ヒント: 次のファイルを更新して新しいリンクを追加します "
+                siteTitle: "映画とドラマライブラリ",
+                siteDescription: "人気シリーズと映画リソースへのワンストップアクセス",
+                all: "すべて",
+                drama: "ドラマ",
+                movie: "映画",
+                variety: "バラエティ番組",
+                footer: "© 2023 映画とドラマリンク | 全著作権所有",
+                noResults: "一致するリソースが見つかりません",
+                tryAgain: "別の検索語を試してください",
+                searchPrompt: "フルエピソードをアンロックするにはシリーズを検索...",
+                popular: "人気のおすすめ",
+                trending: "トレンドドラマ",
+                classic: "クラシックコレクション"
             },
             ko: {
-                siteTitle: "다국어 링크트리",
-                siteDescription: "모든 링크를 한 곳에서",
-                searchPlaceholder: "링크 검색...",
-                allLanguages: "모든 언어",
-                zh: "중국어",
-                en: "영어",
-                ja: "일본어",
-                ko: "한국어",
-                es: "스페인어",
-                ar: "아랍어",
-                footer: "© 2023 다국어 링크트리 | 모든 권리 보유",
-                noResults: "일치하는 링크를 찾을 수 없습니다",
-                tryAgain: "다른 검색어를 시도하거나 언어 필터를 변경하십시오",
-                adminHint: "관리자 팁: 다음 파일을 업데이트하여 새 링크 추가 "
+                siteTitle: "영화 및 드라마 라이브러리",
+                siteDescription: "인기 시리즈 및 영화 리소스에 대한 원스톱 액세스",
+                all: "전체",
+                drama: "드라마",
+                movie: "영화",
+                variety: "예능 프로그램",
+                footer: "© 2023 영화 및 드라마 링크 | 모든 권리 보유",
+                noResults: "일치하는 리소스를 찾을 수 없습니다",
+                tryAgain: "다른 검색어를 사용해 보세요",
+                searchPrompt: "전체 에피소드를 잠금 해제하려면 시리즈를 검색하세요...",
+                popular: "인기 추천",
+                trending: "인기 드라마",
+                classic: "클래식 컬렉션"
             },
             es: {
-                siteTitle: "Linktree Multilingüe",
-                siteDescription: "Todos tus enlaces en un solo lugar",
-                searchPlaceholder: "Buscar enlaces...",
-                allLanguages: "Todos los idiomas",
-                zh: "Chino",
-                en: "Inglés",
-                ja: "Japonés",
-                ko: "Coreano",
-                es: "Español",
-                ar: "Árabe",
-                footer: "© 2023 Linktree Multilingüe | Todos los derechos reservados",
-                noResults: "No se encontraron enlaces coincidentes",
-                tryAgain: "Intenta con un término de búsqueda diferente o cambia el filtro de idioma",
-                adminHint: "Consejo de administrador: agregue nuevos enlaces actualizando el "
+                siteTitle: "Biblioteca de Cine y Drama",
+                siteDescription: "Acceso integral a series populares y recursos cinematográficos",
+                all: "Todo",
+                drama: "Dramas",
+                movie: "Películas",
+                variety: "Programas de variedades",
+                footer: "© 2023 Enlaces de Cine y Drama | Todos los derechos reservados",
+                noResults: "No se encontraron recursos coincidentes",
+                tryAgain: "Intenta con un término de búsqueda diferente",
+                searchPrompt: "Busca series para desbloquear episodios completos...",
+                popular: "Recomendaciones populares",
+                trending: "Series de tendencia",
+                classic: "Colecciones clásicas"
             },
             ar: {
-                siteTitle: "شجرة الروابط متعددة اللغات",
-                siteDescription: "كل روابطك في مكان واحد",
-                searchPlaceholder: "ابحث عن الروابط...",
-                allLanguages: "جميع اللغات",
-                zh: "الصينية",
-                en: "الإنجليزية",
-                ja: "اليابانية",
-                ko: "الكورية",
-                es: "الإسبانية",
-                ar: "العربية",
-                footer: "© 2023 شجرة الروابط متعددة اللغات | جميع الحقوق محفوظة",
-                noResults: "لم يتم العثور على روابط مطابقة",
-                tryAgain: "جرب مصطلح بحث مختلف أو غير مرشح اللغة",
-                adminHint: "نصيحة المسؤول: أضف روابط جديدة عن طريق تحديث "
+                siteTitle: "مكتبة الأفلام والدراما",
+                siteDescription: "وصول شامل للمسلسلات الشعبية وموارد الأفلام",
+                all: "الكل",
+                drama: "الدراما",
+                movie: "أفلام",
+                variety: "برامج متنوعة",
+                footer: "© 2023 روابط الأفلام والدراما | جميع الحقوق محفوظة",
+                noResults: "لم يتم العثور على موارد مطابقة",
+                tryAgain: "جرب مصطلح بحث مختلف",
+                searchPrompt: "ابحث عن المسلسلات لفتح الحلقات الكاملة...",
+                popular: "التوصيات الشعبية",
+                trending: "مسلسلات رائجة",
+                classic: "المجموعات الكلاسيكية"
             }
         };
         
         // 当前语言
-        let currentLang = 'zh';
+        let currentLang = 'en';
+        // 当前筛选的语言
+        let currentFilterLang = 'all';
         
         // 应用语言设置
         function applyLanguage(lang) {
@@ -583,29 +623,87 @@
             // 更新界面文本
             document.getElementById('siteTitle').textContent = t.siteTitle;
             document.getElementById('siteDescription').textContent = t.siteDescription;
-            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('searchInput').placeholder = t.searchPrompt;
             document.getElementById('footerText').textContent = t.footer;
             
-            // 更新"所有语言"按钮
-            document.querySelector('.filter-btn[data-filter="all"]').textContent = t.allLanguages;
-            
             // 更新筛选按钮
-            document.querySelector('.filter-btn[data-filter="zh"]').textContent = t.zh;
-            document.querySelector('.filter-btn[data-filter="en"]').textContent = t.en;
-            document.querySelector('.filter-btn[data-filter="ja"]').textContent = t.ja;
-            document.querySelector('.filter-btn[data-filter="ko"]').textContent = t.ko;
-            
-            // 更新管理提示
-            document.querySelector('.admin-hint p').innerHTML = 
-                `<i class="fas fa-info-circle"></i> ${t.adminHint}<a href="https://github.com/yourusername/yourrepo/blob/main/data.json" target="_blank">data.json</a> 文件`;
+            document.querySelector('.filter-btn[data-filter="all"]').textContent = t.all;
+            document.querySelector('.filter-btn[data-filter="drama"]').textContent = t.drama;
+            document.querySelector('.filter-btn[data-filter="movie"]').textContent = t.movie;
+            document.querySelector('.filter-btn[data-filter="variety"]').textContent = t.variety;
         }
         
         // 加载并渲染链接数据
         async function loadAndRenderLinks() {
             try {
                 // 在实际部署中，URL应为：'https://yourdomain.com/data.json'
-                const response = await fetch('data.json');
-                const linksData = await response.json();
+                // 这里使用模拟数据
+                const linksData = [
+                    {
+                        "title": "The Last Kingdom",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "Epic historical drama series set in Viking-era England",
+                        "lang": "en",
+                        "category": "drama"
+                    },
+                    {
+                        "title": "黑暗荣耀",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "韩剧复仇题材热播剧，宋慧乔主演",
+                        "lang": "zh",
+                        "category": "drama"
+                    },
+                    {
+                        "title": "Money Heist",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1574375927938-dfa4db985f00?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "Spanish heist crime drama television series",
+                        "lang": "es",
+                        "category": "drama"
+                    },
+                    {
+                        "title": "半沢直樹",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1543536448-d209d2d13a1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "日本の人気テレビドラマシリーズ",
+                        "lang": "ja",
+                        "category": "drama"
+                    },
+                    {
+                        "title": "Inception",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "Sci-fi action movie starring Leonardo DiCaprio",
+                        "lang": "en",
+                        "category": "movie"
+                    },
+                    {
+                        "title": "Running Man",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1571772996211-2f02c9727629?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "韩国人气综艺节目，刘在石主持",
+                        "lang": "ko",
+                        "category": "variety"
+                    },
+                    {
+                        "title": "The Queen's Gambit",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1608889476518-738c9b1dcb40?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "Netflix original miniseries about a chess prodigy",
+                        "lang": "en",
+                        "category": "drama"
+                    },
+                    {
+                        "title": "鱿鱼游戏",
+                        "url": "#",
+                        "image": "https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+                        "desc": "Netflix惊悚剧集，全球爆火",
+                        "lang": "zh",
+                        "category": "drama"
+                    }
+                ];
                 
                 renderLinks(linksData);
             } catch (error) {
@@ -613,8 +711,8 @@
                 document.getElementById('linksContainer').innerHTML = `
                     <div class="no-results">
                         <i class="fas fa-exclamation-triangle fa-2x"></i>
-                        <h3>数据加载失败</h3>
-                        <p>请稍后再试或检查网络连接</p>
+                        <h3>${translations[currentLang].noResults}</h3>
+                        <p>${translations[currentLang].tryAgain}</p>
                     </div>
                 `;
             }
@@ -625,45 +723,46 @@
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
             
-            // 按语言分组
-            const languages = {};
+            // 按类别分组
+            const categories = {
+                popular: { title: translations[currentLang].popular, items: [] },
+                trending: { title: translations[currentLang].trending, items: [] },
+                classic: { title: translations[currentLang].classic, items: [] }
+            };
             
-            linksData.forEach(link => {
-                if (!languages[link.lang]) {
-                    languages[link.lang] = [];
+            // 分配链接到类别
+            linksData.forEach((link, index) => {
+                if (currentFilterLang !== 'all' && link.lang !== currentFilterLang) return;
+                
+                if (index < 3) {
+                    categories.popular.items.push(link);
+                } else if (index < 6) {
+                    categories.trending.items.push(link);
+                } else {
+                    categories.classic.items.push(link);
                 }
-                languages[link.lang].push(link);
             });
             
-            // 渲染每种语言
-            for (const lang in languages) {
-                // 添加语言标题
+            // 渲染每个类别
+            for (const category in categories) {
+                const cat = categories[category];
+                if (cat.items.length === 0) continue;
+                
+                // 添加类别标题
                 const title = document.createElement('h2');
                 title.className = 'category-title';
-                title.dataset.lang = lang;
-                
-                // 根据语言显示标题
-                if (lang === 'en') title.textContent = translations[currentLang].en;
-                if (lang === 'zh') title.textContent = translations[currentLang].zh;
-                if (lang === 'ja') title.textContent = translations[currentLang].ja;
-                if (lang === 'ko') title.textContent = translations[currentLang].ko;
-                if (lang === 'es') title.textContent = translations[currentLang].es;
-                if (lang === 'ar') title.textContent = translations[currentLang].ar;
-                
+                title.textContent = cat.title;
                 container.appendChild(title);
                 
-                // 添加该语言下的链接
-                languages[lang].forEach(link => {
+                // 添加该类别下的链接
+                cat.items.forEach(link => {
                     const card = document.createElement('a');
                     card.className = 'link-card';
                     card.href = link.url;
-                    card.dataset.lang = link.lang;
                     card.target = '_blank';
                     
                     card.innerHTML = `
-                        <div class="link-icon">
-                            <i class="fab ${link.icon}"></i>
-                        </div>
+                        <img src="${link.image}" alt="${link.title}" class="link-image">
                         <div class="link-content">
                             <div class="link-title">${link.title}</div>
                             <div class="link-desc">${link.desc}</div>
@@ -676,13 +775,18 @@
             }
             
             // 如果没有链接，显示提示
-            if (linksData.length === 0) {
+            let totalItems = 0;
+            for (const category in categories) {
+                totalItems += categories[category].items.length;
+            }
+            
+            if (totalItems === 0) {
                 const noLinks = document.createElement('div');
                 noLinks.className = 'no-results';
                 noLinks.innerHTML = `
-                    <i class="fas fa-plus-circle fa-2x"></i>
+                    <i class="fas fa-search fa-2x"></i>
                     <h3>${translations[currentLang].noResults}</h3>
-                    <p>${translations[currentLang].adminHint}data.json</p>
+                    <p>${translations[currentLang].tryAgain}</p>
                 `;
                 container.appendChild(noLinks);
             }
@@ -691,23 +795,23 @@
         // 过滤和搜索功能
         function filterLinks() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+            const activeCategoryFilter = document.querySelector('.filter-btn.active').dataset.filter;
             
-            const linkCards = document.querySelectorAll('.link-card');
-            const categoryTitles = document.querySelectorAll('.category-title');
+            const links = document.querySelectorAll('.link-card');
+            const categories = document.querySelectorAll('.category-title');
             
             let visibleItems = 0;
             
             // 处理链接卡片
-            linkCards.forEach(card => {
+            links.forEach(card => {
                 const title = card.querySelector('.link-title').textContent.toLowerCase();
                 const desc = card.querySelector('.link-desc').textContent.toLowerCase();
-                const lang = card.dataset.lang;
                 
-                const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || lang.includes(searchTerm);
-                const matchesFilter = activeFilter === 'all' || lang === activeFilter;
+                const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
+                const matchesCategory = activeCategoryFilter === 'all' || 
+                                        card.closest('.category-title').nextElementSibling === card;
                 
-                if (matchesSearch && matchesFilter) {
+                if (matchesSearch && matchesCategory) {
                     card.style.display = 'flex';
                     visibleItems++;
                 } else {
@@ -716,10 +820,10 @@
             });
             
             // 处理分类标题
-            categoryTitles.forEach(title => {
-                const lang = title.dataset.lang;
-                const hasVisibleCards = Array.from(linkCards).some(card => {
-                    return card.dataset.lang === lang && card.style.display !== 'none';
+            categories.forEach(title => {
+                const hasVisibleCards = Array.from(links).some(card => {
+                    return card.previousElementSibling === title && 
+                           card.style.display !== 'none';
                 });
                 
                 if (hasVisibleCards) {
@@ -746,7 +850,7 @@
         // 初始加载
         document.addEventListener('DOMContentLoaded', function() {
             // 应用默认语言
-            applyLanguage('zh');
+            applyLanguage('en');
             
             // 加载链接数据
             loadAndRenderLinks();
@@ -790,6 +894,9 @@
                     button.classList.add('active');
                     const lang = button.dataset.lang;
                     applyLanguage(lang);
+                    
+                    // 保存语言筛选
+                    currentFilterLang = lang;
                     
                     // 重新加载数据以应用新语言
                     loadAndRenderLinks();

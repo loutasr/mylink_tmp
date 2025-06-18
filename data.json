@@ -1,44 +1,10 @@
 [
   {
-    "title": "GitHub",
-    "url": "https://github.com",
-    "icon": "fa-github",
-    "desc": "我的代码项目",
-    "lang": "en"
-  },
-  {
-    "title": "微博",
-    "url": "https://weibo.com",
-    "icon": "fa-weibo",
-    "desc": "我的社交媒体",
-    "lang": "zh"
-  },
-  {
-    "title": "YouTube",
-    "url": "https://youtube.com",
-    "icon": "fa-youtube",
-    "desc": "我的视频频道",
-    "lang": "en"
-  },
-  {
-    "title": "知乎",
-    "url": "https://zhihu.com",
-    "icon": "fa-zhihu",
-    "desc": "问答社区",
-    "lang": "zh"
-  },
-  {
-    "title": "Twitter",
-    "url": "https://twitter.com",
-    "icon": "fa-twitter",
-    "desc": "社交网络",
-    "lang": "en"
-  },
-  {
-    "title": "B站",
-    "url": "https://bilibili.com",
-    "icon": "fa-bilibili",
-    "desc": "视频分享平台",
-    "lang": "zh"
+    "title": "Marry Again My Billionaire Ex",
+    "url": "https://dramabox.onelink.me/dqUm/24ee28t1",
+    "image":"https://raw.githubusercontent.com/loutasr/mylink_tmp/main/images/1.jpg",
+    "desc": "剧集描述",
+    "lang": "en",
+    "category":"drama"
   }
 ]
