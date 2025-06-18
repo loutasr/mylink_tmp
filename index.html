@@ -493,13 +493,6 @@
                 <i class="fas fa-search search-icon"></i>
                 <input type="text" id="searchInput" class="search-box" placeholder="Search series to unlock full episodes...">
             </div>
-            
-            <div class="filters" id="filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="drama">Dramas</button>
-                <button class="filter-btn" data-filter="movie">Movies</button>
-                <button class="filter-btn" data-filter="variety">Variety Shows</button>
-            </div>
         </header>
         
         <main>
@@ -521,92 +514,56 @@
             en: {
                 siteTitle: "Movie & Drama Library",
                 siteDescription: "One-stop access to popular series and film resources",
-                all: "All",
-                drama: "Dramas",
-                movie: "Movies",
-                variety: "Variety Shows",
                 footer: "© 2023 Movie & Drama Links | All Rights Reserved",
                 noResults: "No matching resources found",
                 tryAgain: "Try a different search term",
                 searchPrompt: "Search series to unlock full episodes...",
-                popular: "Popular Now",
-                trending: "Trending Series",
-                classic: "Classic Collections"
+                all: "All Languages"
             },
             zh: {
                 siteTitle: "影视资源库",
                 siteDescription: "热门剧集与影视资源一站式获取",
-                all: "全部",
-                drama: "电视剧",
-                movie: "电影",
-                variety: "综艺节目",
                 footer: "© 2023 影视资源库 | 保留所有权利",
                 noResults: "未找到匹配的资源",
                 tryAgain: "请尝试其他搜索词",
                 searchPrompt: "搜索剧名解锁全集...",
-                popular: "热门推荐",
-                trending: "热播剧集",
-                classic: "经典收藏"
+                all: "所有语言"
             },
             ja: {
                 siteTitle: "映画とドラマライブラリ",
                 siteDescription: "人気シリーズと映画リソースへのワンストップアクセス",
-                all: "すべて",
-                drama: "ドラマ",
-                movie: "映画",
-                variety: "バラエティ番組",
                 footer: "© 2023 映画とドラマリンク | 全著作権所有",
                 noResults: "一致するリソースが見つかりません",
                 tryAgain: "別の検索語を試してください",
                 searchPrompt: "フルエピソードをアンロックするにはシリーズを検索...",
-                popular: "人気のおすすめ",
-                trending: "トレンドドラマ",
-                classic: "クラシックコレクション"
+                all: "すべての言語"
             },
             ko: {
                 siteTitle: "영화 및 드라마 라이브러리",
                 siteDescription: "인기 시리즈 및 영화 리소스에 대한 원스톱 액세스",
-                all: "전체",
-                drama: "드라마",
-                movie: "영화",
-                variety: "예능 프로그램",
                 footer: "© 2023 영화 및 드라마 링크 | 모든 권리 보유",
                 noResults: "일치하는 리소스를 찾을 수 없습니다",
                 tryAgain: "다른 검색어를 사용해 보세요",
                 searchPrompt: "전체 에피소드를 잠금 해제하려면 시리즈를 검색하세요...",
-                popular: "인기 추천",
-                trending: "인기 드라마",
-                classic: "클래식 컬렉션"
+                all: "모든 언어"
             },
             es: {
                 siteTitle: "Biblioteca de Cine y Drama",
                 siteDescription: "Acceso integral a series populares y recursos cinematográficos",
-                all: "Todo",
-                drama: "Dramas",
-                movie: "Películas",
-                variety: "Programas de variedades",
                 footer: "© 2023 Enlaces de Cine y Drama | Todos los derechos reservados",
                 noResults: "No se encontraron recursos coincidentes",
                 tryAgain: "Intenta con un término de búsqueda diferente",
                 searchPrompt: "Busca series para desbloquear episodios completos...",
-                popular: "Recomendaciones populares",
-                trending: "Series de tendencia",
-                classic: "Colecciones clásicas"
+                all: "Todos los idiomas"
             },
             ar: {
                 siteTitle: "مكتبة الأفلام والدراما",
                 siteDescription: "وصول شامل للمسلسلات الشعبية وموارد الأفلام",
-                all: "الكل",
-                drama: "الدراما",
-                movie: "أفلام",
-                variety: "برامج متنوعة",
                 footer: "© 2023 روابط الأفلام والدراما | جميع الحقوق محفوظة",
                 noResults: "لم يتم العثور على موارد مطابقة",
                 tryAgain: "جرب مصطلح بحث مختلف",
                 searchPrompt: "ابحث عن المسلسلات لفتح الحلقات الكاملة...",
-                popular: "التوصيات الشعبية",
-                trending: "مسلسلات رائجة",
-                classic: "المجموعات الكلاسيكية"
+                all: "جميع اللغات"
             }
         };
         
@@ -625,89 +582,78 @@
             document.getElementById('siteDescription').textContent = t.siteDescription;
             document.getElementById('searchInput').placeholder = t.searchPrompt;
             document.getElementById('footerText').textContent = t.footer;
-            
-            // 更新筛选按钮
-            document.querySelector('.filter-btn[data-filter="all"]').textContent = t.all;
-            document.querySelector('.filter-btn[data-filter="drama"]').textContent = t.drama;
-            document.querySelector('.filter-btn[data-filter="movie"]').textContent = t.movie;
-            document.querySelector('.filter-btn[data-filter="variety"]').textContent = t.variety;
         }
         
         // 加载并渲染链接数据
         async function loadAndRenderLinks() {
             try {
-                // 在实际部署中，URL应为：'https://yourdomain.com/data.json'
-                // 这里使用模拟数据
+                // 在实际部署中，使用以下URL：
+                // const response = await fetch('data.json');
+                // const linksData = await response.json();
+                
+                // 这里使用模拟的JSON数据
                 const linksData = [
                     {
-                        "title": "The Last Kingdom",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "Epic historical drama series set in Viking-era England",
-                        "lang": "en",
-                        "category": "drama"
+                        "title": "YouTube",
+                        "url": "https://www.youtube.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/1384/1384060.png",
+                        "desc": "全球最大的视频分享平台",
+                        "lang": "en"
                     },
                     {
-                        "title": "黑暗荣耀",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "韩剧复仇题材热播剧，宋慧乔主演",
-                        "lang": "zh",
-                        "category": "drama"
+                        "title": "Bilibili",
+                        "url": "https://www.bilibili.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/2504/2504919.png",
+                        "desc": "中国领先的年轻人文化社区",
+                        "lang": "zh"
                     },
                     {
-                        "title": "Money Heist",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1574375927938-dfa4db985f00?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "Spanish heist crime drama television series",
-                        "lang": "es",
-                        "category": "drama"
+                        "title": "Netflix",
+                        "url": "https://www.netflix.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/732/732228.png",
+                        "desc": "全球领先的流媒体服务",
+                        "lang": "en"
                     },
                     {
-                        "title": "半沢直樹",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1543536448-d209d2d13a1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "日本の人気テレビドラマシリーズ",
-                        "lang": "ja",
-                        "category": "drama"
+                        "title": "IQIYI",
+                        "url": "https://www.iq.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/732/732222.png",
+                        "desc": "中国领先的在线视频平台",
+                        "lang": "zh"
                     },
                     {
-                        "title": "Inception",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "Sci-fi action movie starring Leonardo DiCaprio",
-                        "lang": "en",
-                        "category": "movie"
+                        "title": "Disney+",
+                        "url": "https://www.disneyplus.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/731/731985.png",
+                        "desc": "迪士尼、皮克斯、漫威等独家内容",
+                        "lang": "en"
                     },
                     {
-                        "title": "Running Man",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1571772996211-2f02c9727629?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "韩国人气综艺节目，刘在石主持",
-                        "lang": "ko",
-                        "category": "variety"
+                        "title": "Youku",
+                        "url": "https://www.youku.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/732/732221.png",
+                        "desc": "阿里巴巴旗下视频平台",
+                        "lang": "zh"
                     },
                     {
-                        "title": "The Queen's Gambit",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1608889476518-738c9b1dcb40?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "Netflix original miniseries about a chess prodigy",
-                        "lang": "en",
-                        "category": "drama"
+                        "title": "Hulu",
+                        "url": "https://www.hulu.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/732/732225.png",
+                        "desc": "美国热门流媒体服务",
+                        "lang": "en"
                     },
                     {
-                        "title": "鱿鱼游戏",
-                        "url": "#",
-                        "image": "https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-                        "desc": "Netflix惊悚剧集，全球爆火",
-                        "lang": "zh",
-                        "category": "drama"
+                        "title": "Tencent Video",
+                        "url": "https://v.qq.com",
+                        "image": "https://cdn-icons-png.flaticon.com/512/732/732227.png",
+                        "desc": "腾讯旗下视频平台",
+                        "lang": "zh"
                     }
                 ];
                 
                 renderLinks(linksData);
             } catch (error) {
-                console.error('Error loading links data:', error);
+                console.error('加载链接数据时出错:', error);
                 document.getElementById('linksContainer').innerHTML = `
                     <div class="no-results">
                         <i class="fas fa-exclamation-triangle fa-2x"></i>
@@ -723,43 +669,43 @@
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
             
-            // 按类别分组
-            const categories = {
-                popular: { title: translations[currentLang].popular, items: [] },
-                trending: { title: translations[currentLang].trending, items: [] },
-                classic: { title: translations[currentLang].classic, items: [] }
-            };
+            // 按语言分组
+            const languages = {};
             
-            // 分配链接到类别
-            linksData.forEach((link, index) => {
+            linksData.forEach(link => {
+                // 应用语言筛选
                 if (currentFilterLang !== 'all' && link.lang !== currentFilterLang) return;
                 
-                if (index < 3) {
-                    categories.popular.items.push(link);
-                } else if (index < 6) {
-                    categories.trending.items.push(link);
-                } else {
-                    categories.classic.items.push(link);
+                if (!languages[link.lang]) {
+                    languages[link.lang] = [];
                 }
+                languages[link.lang].push(link);
             });
             
-            // 渲染每个类别
-            for (const category in categories) {
-                const cat = categories[category];
-                if (cat.items.length === 0) continue;
-                
-                // 添加类别标题
+            // 渲染每种语言
+            for (const lang in languages) {
+                // 添加语言标题
                 const title = document.createElement('h2');
                 title.className = 'category-title';
-                title.textContent = cat.title;
+                title.dataset.lang = lang;
+                
+                // 根据语言显示标题
+                if (lang === 'en') title.textContent = 'English';
+                if (lang === 'zh') title.textContent = '中文';
+                if (lang === 'ja') title.textContent = '日本語';
+                if (lang === 'ko') title.textContent = '한국어';
+                if (lang === 'es') title.textContent = 'Español';
+                if (lang === 'ar') title.textContent = 'العربية';
+                
                 container.appendChild(title);
                 
-                // 添加该类别下的链接
-                cat.items.forEach(link => {
+                // 添加该语言下的链接
+                languages[lang].forEach(link => {
                     const card = document.createElement('a');
                     card.className = 'link-card';
                     card.href = link.url;
                     card.target = '_blank';
+                    card.dataset.lang = link.lang;
                     
                     card.innerHTML = `
                         <img src="${link.image}" alt="${link.title}" class="link-image">
@@ -776,8 +722,8 @@
             
             // 如果没有链接，显示提示
             let totalItems = 0;
-            for (const category in categories) {
-                totalItems += categories[category].items.length;
+            for (const lang in languages) {
+                totalItems += languages[lang].length;
             }
             
             if (totalItems === 0) {
@@ -795,7 +741,6 @@
         // 过滤和搜索功能
         function filterLinks() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const activeCategoryFilter = document.querySelector('.filter-btn.active').dataset.filter;
             
             const links = document.querySelectorAll('.link-card');
             const categories = document.querySelectorAll('.category-title');
@@ -808,10 +753,8 @@
                 const desc = card.querySelector('.link-desc').textContent.toLowerCase();
                 
                 const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
-                const matchesCategory = activeCategoryFilter === 'all' || 
-                                        card.closest('.category-title').nextElementSibling === card;
                 
-                if (matchesSearch && matchesCategory) {
+                if (matchesSearch) {
                     card.style.display = 'flex';
                     visibleItems++;
                 } else {
@@ -874,17 +817,7 @@
             
             // 搜索功能
             const searchInput = document.getElementById('searchInput');
-            const filterButtons = document.querySelectorAll('.filter-btn');
-            
             searchInput.addEventListener('input', filterLinks);
-            
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    filterLinks();
-                });
-            });
             
             // 语言切换
             const langButtons = document.querySelectorAll('.lang-btn');
