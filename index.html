@@ -570,7 +570,7 @@
                 <p class="bio" id="siteDescription">热门剧集与影视资源一站式获取</p>
             </div>
             
-            <!-- 语言切换器 -->
+            <!-- 语言切换器 - 包含所有语言选项 -->
             <div class="language-switcher">
                 <button class="lang-btn active" data-lang="all">
                     <span class="lang-flag">🌐</span> <span class="lang-text">全部</span>
@@ -583,6 +583,15 @@
                 </button>
                 <button class="lang-btn" data-lang="ja">
                     <span class="lang-flag">🇯🇵</span> <span class="lang-text">日本語</span>
+                </button>
+                <button class="lang-btn" data-lang="ko">
+                    <span class="lang-flag">🇰🇷</span> <span class="lang-text">한국어</span>
+                </button>
+                <button class="lang-btn" data-lang="es">
+                    <span class="lang-flag">🇪🇸</span> <span class="lang-text">Español</span>
+                </button>
+                <button class="lang-btn" data-lang="ar">
+                    <span class="lang-flag">🇸🇦</span> <span class="lang-text">العربية</span>
                 </button>
             </div>
             
@@ -602,7 +611,7 @@
         
         <footer class="footer">
             <p id="footerText">© 2023 影视资源库 | 保留所有权利</p>
-            <p class="status-info">当前版本: v1.2.1 | 数据更新时间: <span id="dataTimestamp">-</span></p>
+            <p class="status-info">当前版本: v1.2.2 | 数据更新时间: <span id="dataTimestamp">-</span></p>
         </footer>
         
         <div class="performance-indicator" id="perfIndicator">
@@ -613,7 +622,7 @@
 
     <script>
         // ================== 应用配置 ================== //
-        const APP_VERSION = 'v1.2.1';
+        const APP_VERSION = 'v1.2.2';
         
         // ================== 状态管理 ================== //
         let currentLang = 'zh';
@@ -622,7 +631,7 @@
         let cachedLinksData = null;
         let lastDataFetchTime = 0;
         
-        // ================== 多语言文本 ================== //
+        // ================== 多语言文本 - 包含所有语言翻译 ================== //
         const translations = {
             en: {
                 siteTitle: "Movie & Drama Library",
@@ -659,6 +668,42 @@
                 loadMore: "さらに読み込む",
                 statusAll: "すべての言語",
                 statusFilter: "フィルター: "
+            },
+            ko: {
+                siteTitle: "영화 및 드라마 라이브러리",
+                siteDescription: "인기 시리즈 및 영화 리소스에 대한 원스톱 액세스",
+                footer: "© 2023 영화 및 드라마 링크 | 모든 권리 보유",
+                noResults: "일치하는 리소스를 찾을 수 없습니다",
+                tryAgain: "다른 검색어를 사용해 보세요",
+                searchPrompt: "전체 에피소드를 잠금 해제하려면 시리즈를 검색하세요...",
+                all: "모든 언어",
+                loadMore: "더보기",
+                statusAll: "모든 언어",
+                statusFilter: "필터: "
+            },
+            es: {
+                siteTitle: "Biblioteca de Cine y Drama",
+                siteDescription: "Acceso integral a series populares y recursos cinematográficos",
+                footer: "© 2023 Enlaces de Cine y Drama | Todos los derechos reservados",
+                noResults: "No se encontraron recursos coincidentes",
+                tryAgain: "Intenta con un término de búsqueda diferente",
+                searchPrompt: "Busca series para desbloquear episodios completos...",
+                all: "Todos los idiomas",
+                loadMore: "Cargar más",
+                statusAll: "Todos los idiomas",
+                statusFilter: "Filtrado por: "
+            },
+            ar: {
+                siteTitle: "مكتبة الأفلام والدراما",
+                siteDescription: "وصول شامل للمسلسلات الشعبية وموارد الأفلام",
+                footer: "© 2023 روابط الأفلام والدراما | جميع الحقوق محفوظة",
+                noResults: "لم يتم العثور على موارد مطابقة",
+                tryAgain: "جرب مصطلح بحث مختلف",
+                searchPrompt: "ابحث عن المسلسلات لفتح الحلقات الكاملة...",
+                all: "جميع اللغات",
+                loadMore: "تحميل المزيد",
+                statusAll: "جميع اللغات",
+                statusFilter: "تم التصفية حسب: "
             }
         };
         
@@ -696,7 +741,10 @@
                 const langNames = {
                     'en': 'English',
                     'zh': '中文',
-                    'ja': '日本語'
+                    'ja': '日本語',
+                    'ko': '한국어',
+                    'es': 'Español',
+                    'ar': 'العربية'
                 };
                 statusInfo.innerHTML = `${t.statusFilter}${langNames[currentFilterLang] || currentFilterLang} | 数据更新时间: <span id="dataTimestamp">${formatTimestamp(lastDataFetchTime)}</span>`;
             }
@@ -829,7 +877,10 @@
                 const langTitles = {
                     'en': 'English',
                     'zh': '中文',
-                    'ja': '日本語'
+                    'ja': '日本語',
+                    'ko': '한국어',
+                    'es': 'Español',
+                    'ar': 'العربية'
                 };
                 title.textContent = langTitles[lang] || lang;
                 
@@ -843,7 +894,6 @@
                     card.dataset.lang = link.lang;
                     card.style.animationDelay = `${index * 0.05}s`;
                     
-                    // 直接使用图片URL，不再添加自定义域名参数
                     card.innerHTML = `
                         <div class="image-container">
                             <img data-src="${link.image}" alt="${link.title}" class="link-image">
@@ -950,7 +1000,7 @@
             initImageLazyLoad();
             
             // 应用默认语言
-            applyLanguage('zh');
+            applyLanguage('en');
             
             // 加载链接数据
             loadAndRenderLinks();
