@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>影视资源库 | 高性能优化版</title>
+    <title>影视资源库 | 安全优化版</title>
     
     <!-- DNS预连接和预加载优化 -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- 内容安全策略 -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; connect-src 'self'">
+    
     <style>
         :root {
             --primary: #6366f1;
@@ -31,6 +34,7 @@
             --border: #e2e8f0;
             --success: #10b981;
             --warning: #f59e0b;
+            --error: #ef4444;
             --transition: all 0.3s ease;
             --gradient-start: #1a1a2e;
             --gradient-end: #16213e;
@@ -68,6 +72,7 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
+            position: relative;
         }
 
         header {
@@ -370,6 +375,32 @@
             color: var(--text);
         }
 
+        /* 安全警告提示 */
+        .security-alert {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            padding: 15px;
+            background: var(--error);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 101;
+            display: none;
+            max-width: 300px;
+            animation: shake 0.5s ease;
+        }
+        
+        .security-alert i {
+            margin-right: 8px;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
         /* 加载动画 */
         .loader {
             display: flex;
@@ -561,6 +592,12 @@
 </head>
 <body>
     <div class="container">
+        <!-- 安全警告提示 -->
+        <div class="security-alert" id="securityAlert">
+            <i class="fas fa-shield-alt"></i>
+            <span>检测到开发者工具已打开，请注意安全</span>
+        </div>
+        
         <header>
             <div class="theme-toggle" id="themeToggle">
                 <i class="fas fa-moon"></i>
@@ -602,7 +639,7 @@
         
         <footer class="footer">
             <p id="footerText">© 2023 影视资源库 | 保留所有权利</p>
-            <p class="status-info">当前版本: v1.2.2 | 数据更新时间: <span id="dataTimestamp">-</span></p>
+            <p class="status-info">当前版本: v1.3.0 | 数据更新时间: <span id="dataTimestamp">-</span></p>
         </footer>
         
         <div class="performance-indicator" id="perfIndicator">
@@ -613,16 +650,52 @@
 
     <script>
         // ================== 应用配置 ================== //
-        const APP_VERSION = 'v1.2.2';
+        const APP_VERSION = 'v1.3.0';
         
         // ================== 状态管理 ================== //
-        let currentLang = 'en'; // 默认语言改为英语
-        let currentFilterLang = 'en'; // 默认筛选语言改为英语
+        let currentLang = 'en'; // 默认语言为英语
+        let currentFilterLang = 'en'; // 默认筛选语言为英语
         let imageObserver = null;
         let cachedLinksData = null;
         let lastDataFetchTime = 0;
+        let devToolsOpen = false;
         
-        // ================== 多语言文本 - 包含所有语言翻译 ================== //
+        // ================== 安全防护 ================== //
+        
+        // 检测开发者工具是否打开
+        function detectDevTools() {
+            const threshold = 160; // 控制台打开时窗口高度的变化阈值
+            
+            function check() {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devToolsOpen) {
+                        devToolsOpen = true;
+                        showSecurityAlert();
+                    }
+                } else {
+                    devToolsOpen = false;
+                }
+            }
+            
+            // 初始检查
+            check();
+            
+            // 定期检查
+            setInterval(check, 1000);
+        }
+        
+        // 显示安全警告
+        function showSecurityAlert() {
+            const alert = document.getElementById('securityAlert');
+            alert.style.display = 'flex';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // ================== 多语言文本 ================== //
         const translations = {
             en: {
                 siteTitle: "Movie & Drama Library",
@@ -634,7 +707,8 @@
                 all: "All Languages",
                 loadMore: "Load More",
                 statusAll: "All Languages",
-                statusFilter: "Filtered by: "
+                statusFilter: "Filtered by: ",
+                securityAlert: "Developer tools detected, please be cautious"
             },
             zh: {
                 siteTitle: "影视资源库",
@@ -646,55 +720,8 @@
                 all: "全部语言",
                 loadMore: "加载更多",
                 statusAll: "所有语言",
-                statusFilter: "筛选语言: "
-            },
-            ja: {
-                siteTitle: "映画とドラマライブラリ",
-                siteDescription: "人気シリーズと映画リソースへのワンストップアクセス",
-                footer: "© 2023 映画とドラマリンク | 全著作権所有",
-                noResults: "一致するリソースが見つかりません",
-                tryAgain: "別の検索語を試してください",
-                searchPrompt: "フルエピソードをアンロックするにはシリーズを検索...",
-                all: "すべての言語",
-                loadMore: "さらに読み込む",
-                statusAll: "すべての言語",
-                statusFilter: "フィルター: "
-            },
-            ko: {
-                siteTitle: "영화 및 드라마 라이브러리",
-                siteDescription: "인기 시리즈 및 영화 리소스에 대한 원스톱 액세스",
-                footer: "© 2023 영화 및 드라마 링크 | 모든 권리 보유",
-                noResults: "일치하는 리소스를 찾을 수 없습니다",
-                tryAgain: "다른 검색어를 사용해 보세요",
-                searchPrompt: "전체 에피소드를 잠금 해제하려면 시리즈를 검색하세요...",
-                all: "모든 언어",
-                loadMore: "더보기",
-                statusAll: "모든 언어",
-                statusFilter: "필터: "
-            },
-            es: {
-                siteTitle: "Biblioteca de Cine y Drama",
-                siteDescription: "Acceso integral a series populares y recursos cinematográficos",
-                footer: "© 2023 Enlaces de Cine y Drama | Todos los derechos reservados",
-                noResults: "No se encontraron recursos coincidentes",
-                tryAgain: "Intenta con un término de búsqueda diferente",
-                searchPrompt: "Busca series para desbloquear episodios completos...",
-                all: "Todos los idiomas",
-                loadMore: "Cargar más",
-                statusAll: "Todos los idiomas",
-                statusFilter: "Filtrado por: "
-            },
-            ar: {
-                siteTitle: "مكتبة الأفلام والدراما",
-                siteDescription: "وصول شامل للمسلسلات الشعبية وموارد الأفلام",
-                footer: "© 2023 روابط الأفلام والدراما | جميع الحقوق محفوظة",
-                noResults: "لم يتم العثور على موارد مطابقة",
-                tryAgain: "جرب مصطلح بحث مختلف",
-                searchPrompt: "ابحث عن المسلسلات لفتح الحلقات الكاملة...",
-                all: "جميع اللغات",
-                loadMore: "تحميل المزيد",
-                statusAll: "جميع اللغات",
-                statusFilter: "تم التصفية حسب: "
+                statusFilter: "筛选语言: ",
+                securityAlert: "检测到开发者工具已打开，请注意安全"
             }
         };
         
@@ -703,13 +730,14 @@
         // 应用语言设置
         function applyLanguage(lang) {
             currentLang = lang;
-            const t = translations[lang];
+            const t = translations[lang] || translations.en;
             
             // 更新界面文本
             document.getElementById('siteTitle').textContent = t.siteTitle;
             document.getElementById('siteDescription').textContent = t.siteDescription;
             document.getElementById('searchInput').placeholder = t.searchPrompt;
             document.getElementById('footerText').textContent = t.footer;
+            document.getElementById('securityAlert').querySelector('span').textContent = t.securityAlert;
             
             // 更新筛选状态
             updateFilterStatus();
@@ -720,20 +748,17 @@
             const statusInfo = document.querySelector('.status-info');
             if (!statusInfo) return;
             
-            const t = translations[currentLang];
-            if (currentFilterLang === 'all') {
-                statusInfo.innerHTML = `${t.statusAll} | 数据更新时间: <span id="dataTimestamp">${formatTimestamp(lastDataFetchTime)}</span>`;
-            } else {
-                const langNames = {
-                    'en': 'English',
-                    'zh': '中文',
-                    'ja': '日本語',
-                    'ko': '한국어',
-                    'es': 'Español',
-                    'ar': 'العربية'
-                };
-                statusInfo.innerHTML = `${t.statusFilter}${langNames[currentFilterLang] || currentFilterLang} | 数据更新时间: <span id="dataTimestamp">${formatTimestamp(lastDataFetchTime)}</span>`;
-            }
+            const t = translations[currentLang] || translations.en;
+            const langNames = {
+                'en': 'English',
+                'zh': '中文',
+                'ja': '日本語',
+                'ko': '한국어',
+                'es': 'Español',
+                'ar': 'العربية'
+            };
+            
+            statusInfo.innerHTML = `${t.statusFilter}${langNames[currentFilterLang] || currentFilterLang} | 数据更新时间: <span id="dataTimestamp">${formatTimestamp(lastDataFetchTime)}</span>`;
         }
         
         // 格式化时间戳
@@ -838,38 +863,30 @@
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
             
-            // 按语言分组
-            const languages = {};
-            let totalItems = 0;
-            
             // 过滤并排序链接：只显示当前语言的链接，按添加时间倒序（最新在最上面）
             const filteredLinks = linksData
                 .filter(link => link.lang === currentFilterLang)
                 .sort((a, b) => {
-                    // 假设数据中有时间戳字段，如果没有则使用索引
-                    if (a.timestamp && b.timestamp) {
-                        return b.timestamp - a.timestamp; // 最新时间在前
-                    }
-                    // 如果没有时间戳，则使用数组索引（假设新添加的在数组后面）
-                    return linksData.indexOf(b) - linksData.indexOf(a);
+                    // 使用时间戳或索引排序
+                    return (b.timestamp || linksData.indexOf(b)) - (a.timestamp || linksData.indexOf(a));
                 });
             
             // 渲染分类标题
-            const title = document.createElement('h2');
-            title.className = 'category-title';
-            
-            // 根据语言显示标题
-            const langTitles = {
-                'en': 'English Resources',
-                'zh': '中文资源',
-                'ja': '日本語リソース',
-                'ko': '한국어 리소스',
-                'es': 'Recursos en Español',
-                'ar': 'الموارد العربية'
-            };
-            title.textContent = langTitles[currentFilterLang] || currentFilterLang;
-            
-            container.appendChild(title);
+            if (filteredLinks.length > 0) {
+                const title = document.createElement('h2');
+                title.className = 'category-title';
+                
+                const langTitles = {
+                    'en': 'English Resources',
+                    'zh': '中文资源',
+                    'ja': '日本語リソース',
+                    'ko': '한국어 리소스',
+                    'es': 'Recursos en Español',
+                    'ar': 'الموارد العربية'
+                };
+                title.textContent = langTitles[currentFilterLang] || currentFilterLang;
+                container.appendChild(title);
+            }
             
             // 渲染链接卡片
             filteredLinks.forEach((link, index) => {
@@ -916,67 +933,16 @@
             
             // 如果没有链接，显示提示
             if (filteredLinks.length === 0) {
+                const t = translations[currentLang] || translations.en;
                 const noLinks = document.createElement('div');
                 noLinks.className = 'no-results';
                 noLinks.innerHTML = `
                     <i class="fas fa-search fa-2x"></i>
-                    <h3>${translations[currentLang].noResults}</h3>
-                    <p>${translations[currentLang].tryAgain}</p>
+                    <h3>${t.noResults}</h3>
+                    <p>${t.tryAgain}</p>
                 `;
                 container.appendChild(noLinks);
             }
-        }
-        
-        // 过滤和搜索功能
-        function filterLinks() {
-            clearTimeout(window.searchDebounce);
-            window.searchDebounce = setTimeout(() => {
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-                
-                const links = document.querySelectorAll('.link-card');
-                const categories = document.querySelectorAll('.category-title');
-                
-                let visibleItems = 0;
-                
-                links.forEach(card => {
-                    const title = card.querySelector('.link-title').textContent.toLowerCase();
-                    const desc = card.querySelector('.link-desc').textContent.toLowerCase();
-                    
-                    const matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm);
-                    
-                    if (matchesSearch) {
-                        card.style.display = 'flex';
-                        visibleItems++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-                
-                categories.forEach(title => {
-                    const hasVisibleCards = Array.from(links).some(card => {
-                        return card.previousElementSibling === title && 
-                               card.style.display !== 'none';
-                    });
-                    
-                    if (hasVisibleCards) {
-                        title.style.display = 'block';
-                    } else {
-                        title.style.display = 'none';
-                    }
-                });
-                
-                const noResults = document.querySelector('.no-results');
-                if (!noResults && visibleItems === 0) {
-                    const noResultsDiv = document.createElement('div');
-                    noResultsDiv.className = 'no-results';
-                    noResultsDiv.innerHTML = `<i class="fas fa-search fa-2x"></i>
-                                              <h3>${translations[currentLang].noResults}</h3>
-                                              <p>${translations[currentLang].tryAgain}</p>`;
-                    document.getElementById('linksContainer').appendChild(noResultsDiv);
-                } else if (noResults && visibleItems > 0) {
-                    noResults.remove();
-                }
-            }, 300);
         }
         
         // ================== 初始化 ================== //
@@ -992,6 +958,9 @@
             
             // 加载链接数据
             loadAndRenderLinks();
+            
+            // 启动开发者工具检测
+            detectDevTools();
             
             // 主题切换功能
             const themeToggle = document.getElementById('themeToggle');
@@ -1021,25 +990,22 @@
             
             // 搜索功能
             const searchInput = document.getElementById('searchInput');
-            searchInput.addEventListener('input', filterLinks);
+            searchInput.addEventListener('input', function() {
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    filterLinks();
+                }, 300);
+            });
             
             // 语言选择下拉框事件
             const languageSelect = document.getElementById('languageSelect');
             languageSelect.addEventListener('change', () => {
                 const lang = languageSelect.value;
-                
-                // 设置当前筛选语言
                 currentFilterLang = lang;
-                
-                // 更新界面语言（可选，根据需求）
                 applyLanguage(lang);
                 
-                // 重新渲染链接
                 if (cachedLinksData) {
                     renderLinks(cachedLinksData);
-                    updateFilterStatus();
-                } else {
-                    loadAndRenderLinks();
                 }
             });
             
@@ -1048,10 +1014,16 @@
                 localStorage.clear();
                 sessionStorage.clear();
                 localStorage.setItem('appVersion', APP_VERSION);
-                console.log('Cleared cache for new version');
             } else {
                 localStorage.setItem('appVersion', APP_VERSION);
             }
+            
+            // 防止右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                if (devToolsOpen) {
+                    e.preventDefault();
+                }
+            });
         });
     </script>
 </body>
