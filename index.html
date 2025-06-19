@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdn.example.com">
+    <link rel="dns-prefetch" href="https://short.dramashare.com">
     
     <!-- 关键资源预加载 -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
@@ -22,7 +22,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* 保持原有样式不变 */
         :root {
             --primary: #6366f1;
             --primary-dark: #4f46e5;
@@ -591,10 +590,6 @@
             }
         }
     </style>
-    
-    <!-- Cloudflare Analytics (可选) -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' 
-            data-cf-beacon='{"token": "YOUR_TOKEN_HERE"}'></script>
 </head>
 <body>
     <div class="container">
@@ -658,12 +653,25 @@
     </div>
 
     <script>
-        // ============== 性能优化关键修改 ============== //
+        // ================== 缓存问题解决方案 ================== //
         
-        // 数据版本控制 (更新数据时修改此版本号)
-        const DATA_VERSION = 'v1.0.4';
+        // 应用版本号 (每次更新时修改此值)
+        const APP_VERSION = 'v1.0.5';
         
-        // 多语言文本
+        // 检查并清除旧缓存
+        if (localStorage.getItem('appVersion') !== APP_VERSION) {
+            console.log('检测到新版本，清除缓存...');
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // 清除缓存后刷新页面
+            localStorage.setItem('appVersion', APP_VERSION);
+            location.reload(true);
+        } else {
+            localStorage.setItem('appVersion', APP_VERSION);
+        }
+        
+        // ================== 多语言文本 ================== //
         const translations = {
             en: {
                 siteTitle: "Movie & Drama Library",
@@ -723,8 +731,6 @@
         
         // 当前语言
         let currentLang = 'zh';
-        // 当前筛选的语言
-        let currentFilterLang = 'all';
         // 图片加载观察器
         let imageObserver = null;
         // 数据缓存
@@ -742,13 +748,14 @@
             document.getElementById('footerText').textContent = t.footer;
         }
         
-        // 使用Cloudflare图片优化
+        // 使用自定义域名优化图片
         function optimizeImageUrl(url) {
-            // 添加Cloudflare图片优化参数
-            // 实际部署时替换为你的域名
-            return url.includes('short.dramashare.top') ? 
-                `${url}?width=200&quality=80` : 
-                url;
+            // 如果是相对路径，转换为绝对路径
+            if (url.startsWith('/')) {
+                return `https://short.dramashare.com${url}?width=200&quality=80`;
+            }
+            // 已经是完整URL，直接返回
+            return url;
         }
         
         // 初始化图片懒加载
@@ -783,7 +790,7 @@
             }
         }
         
-        // 加载并渲染链接数据
+        // 加载并渲染链接数据 (添加缓存清除机制)
         async function loadAndRenderLinks() {
             try {
                 const perfIndicator = document.getElementById('perfIndicator');
@@ -799,10 +806,11 @@
                     return;
                 }
                 
-                // 添加缓存控制头
-                const response = await fetch(`data.json?${DATA_VERSION}`, {
+                // 添加时间戳防止缓存
+                const timestamp = new Date().getTime();
+                const response = await fetch(`data.json?ts=${timestamp}`, {
                     headers: {
-                        'Cache-Control': 'max-age=3600, stale-while-revalidate=86400'
+                        'Cache-Control': 'no-cache'
                     }
                 });
                 
@@ -839,7 +847,7 @@
             }
         }
         
-        // 渲染所有链接 (优化大数据量性能)
+        // 渲染所有链接
         function renderLinks(linksData) {
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
@@ -847,13 +855,7 @@
             // 按语言分组
             const languages = {};
             
-            // 使用虚拟滚动技术优化大数据量渲染
-            const visibleItems = Math.min(100, linksData.length);
-            const dataSlice = linksData.slice(0, visibleItems);
-            
-            dataSlice.forEach(link => {
-                if (currentFilterLang !== 'all' && link.lang !== currentFilterLang) return;
-                
+            linksData.forEach(link => {
                 if (!languages[link.lang]) {
                     languages[link.lang] = [];
                 }
@@ -885,7 +887,7 @@
                     card.href = link.url;
                     card.target = '_blank';
                     card.dataset.lang = link.lang;
-                    card.style.animationDelay = `${index * 0.05}s`; // 加快动画速度
+                    card.style.animationDelay = `${index * 0.05}s`;
                     
                     const optimizedImage = optimizeImageUrl(link.image);
                     
@@ -926,12 +928,7 @@
             }
             
             // 如果没有链接，显示提示
-            let totalItems = 0;
-            for (const lang in languages) {
-                totalItems += languages[lang].length;
-            }
-            
-            if (totalItems === 0) {
+            if (linksData.length === 0) {
                 const noLinks = document.createElement('div');
                 noLinks.className = 'no-results';
                 noLinks.innerHTML = `
@@ -940,17 +937,6 @@
                     <p>${translations[currentLang].tryAgain}</p>
                 `;
                 container.appendChild(noLinks);
-            }
-            
-            // 添加滚动加载更多功能
-            if (linksData.length > visibleItems) {
-                const loadMore = document.createElement('button');
-                loadMore.className = 'load-more';
-                loadMore.textContent = '加载更多...';
-                loadMore.onclick = () => {
-                    renderLinks(linksData);
-                };
-                container.appendChild(loadMore);
             }
         }
         
@@ -1046,20 +1032,8 @@
                     button.classList.add('active');
                     const lang = button.dataset.lang;
                     applyLanguage(lang);
-                    currentFilterLang = lang;
                     loadAndRenderLinks();
                 });
-            });
-            
-            // 性能监控
-            window.addEventListener('load', () => {
-                const perfEntries = performance.getEntriesByType('navigation');
-                if (perfEntries.length > 0) {
-                    const navEntry = perfEntries[0];
-                    const loadTime = navEntry.domContentLoadedEventEnd - navEntry.startTime;
-                    document.getElementById('perfIndicator').innerHTML = 
-                        `<div class="status"></div><span>DOM加载: ${loadTime.toFixed(0)}ms</span>`;
-                }
             });
         });
     </script>
