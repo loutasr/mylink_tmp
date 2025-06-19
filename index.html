@@ -330,40 +330,44 @@
             opacity: 0.8;
         }
 
-        /* 语言切换器 */
-        .language-switcher {
+        /* 语言选择下拉框样式 */
+        .language-selector {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
             margin: 15px 0 20px;
             animation: slideIn 0.7s ease-out;
         }
         
-        .lang-btn {
-            padding: 8px 15px;
+        .lang-select {
+            width: 200px;
+            padding: 12px 15px;
             border-radius: 50px;
             background: var(--card-bg);
             border: 1px solid var(--border);
-            font-size: 0.85rem;
+            font-size: 1rem;
+            color: var(--text);
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px;
+            outline: none;
         }
         
-        .lang-btn:hover, .lang-btn.active {
-            background: var(--primary);
-            color: white;
+        .lang-select:focus {
             border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 4px 12px rgba(99, 102, 241, 0.3);
         }
         
-        .lang-flag {
-            font-size: 1.1rem;
+        .lang-select option {
+            padding: 8px;
+            background: var(--card-bg);
+            color: var(--text);
         }
 
         /* 加载动画 */
@@ -570,29 +574,16 @@
                 <p class="bio" id="siteDescription">热门剧集与影视资源一站式获取</p>
             </div>
             
-            <!-- 语言切换器 - 包含所有语言选项 -->
-            <div class="language-switcher">
-                <button class="lang-btn active" data-lang="all">
-                    <span class="lang-flag">🌐</span> <span class="lang-text">全部</span>
-                </button>
-                <button class="lang-btn" data-lang="en">
-                    <span class="lang-flag">🇺🇸</span> <span class="lang-text">English</span>
-                </button>
-                <button class="lang-btn" data-lang="zh">
-                    <span class="lang-flag">🇨🇳</span> <span class="lang-text">中文</span>
-                </button>
-                <button class="lang-btn" data-lang="ja">
-                    <span class="lang-flag">🇯🇵</span> <span class="lang-text">日本語</span>
-                </button>
-                <button class="lang-btn" data-lang="ko">
-                    <span class="lang-flag">🇰🇷</span> <span class="lang-text">한국어</span>
-                </button>
-                <button class="lang-btn" data-lang="es">
-                    <span class="lang-flag">🇪🇸</span> <span class="lang-text">Español</span>
-                </button>
-                <button class="lang-btn" data-lang="ar">
-                    <span class="lang-flag">🇸🇦</span> <span class="lang-text">العربية</span>
-                </button>
+            <!-- 语言选择下拉框 -->
+            <div class="language-selector">
+                <select id="languageSelect" class="lang-select">
+                    <option value="en">🇺🇸 English</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                    <option value="ko">🇰🇷 한국어</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="ar">🇸🇦 العربية</option>
+                </select>
             </div>
             
             <div class="search-container">
@@ -625,8 +616,8 @@
         const APP_VERSION = 'v1.2.2';
         
         // ================== 状态管理 ================== //
-        let currentLang = 'zh';
-        let currentFilterLang = 'all';
+        let currentLang = 'en'; // 默认语言改为英语
+        let currentFilterLang = 'en'; // 默认筛选语言改为英语
         let imageObserver = null;
         let cachedLinksData = null;
         let lastDataFetchTime = 0;
@@ -719,11 +710,6 @@
             document.getElementById('siteDescription').textContent = t.siteDescription;
             document.getElementById('searchInput').placeholder = t.searchPrompt;
             document.getElementById('footerText').textContent = t.footer;
-            
-            // 更新"全部"按钮文本
-            document.querySelectorAll('.lang-btn[data-lang="all"] .lang-text').forEach(el => {
-                el.textContent = t.all;
-            });
             
             // 更新筛选状态
             updateFilterStatus();
@@ -856,81 +842,80 @@
             const languages = {};
             let totalItems = 0;
             
-            linksData.forEach(link => {
-                // 应用语言筛选
-                if (currentFilterLang !== 'all' && link.lang !== currentFilterLang) return;
+            // 过滤并排序链接：只显示当前语言的链接，按添加时间倒序（最新在最上面）
+            const filteredLinks = linksData
+                .filter(link => link.lang === currentFilterLang)
+                .sort((a, b) => {
+                    // 假设数据中有时间戳字段，如果没有则使用索引
+                    if (a.timestamp && b.timestamp) {
+                        return b.timestamp - a.timestamp; // 最新时间在前
+                    }
+                    // 如果没有时间戳，则使用数组索引（假设新添加的在数组后面）
+                    return linksData.indexOf(b) - linksData.indexOf(a);
+                });
+            
+            // 渲染分类标题
+            const title = document.createElement('h2');
+            title.className = 'category-title';
+            
+            // 根据语言显示标题
+            const langTitles = {
+                'en': 'English Resources',
+                'zh': '中文资源',
+                'ja': '日本語リソース',
+                'ko': '한국어 리소스',
+                'es': 'Recursos en Español',
+                'ar': 'الموارد العربية'
+            };
+            title.textContent = langTitles[currentFilterLang] || currentFilterLang;
+            
+            container.appendChild(title);
+            
+            // 渲染链接卡片
+            filteredLinks.forEach((link, index) => {
+                const card = document.createElement('a');
+                card.className = 'link-card';
+                card.href = link.url;
+                card.target = '_blank';
+                card.dataset.lang = link.lang;
+                card.style.animationDelay = `${index * 0.05}s`;
                 
-                if (!languages[link.lang]) {
-                    languages[link.lang] = [];
+                card.innerHTML = `
+                    <div class="image-container">
+                        <img data-src="${link.image}" alt="${link.title}" class="link-image">
+                        <div class="image-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+                    <div class="link-content">
+                        <div class="link-title">${link.title}</div>
+                        <div class="link-desc">${link.desc}</div>
+                    </div>
+                    <i class="fas fa-arrow-right link-arrow"></i>
+                `;
+                
+                container.appendChild(card);
+                
+                const img = card.querySelector('.link-image');
+                if (imageObserver) {
+                    imageObserver.observe(img);
+                } else {
+                    img.src = link.image;
+                    const placeholder = card.querySelector('.image-placeholder');
+                    img.onload = function() {
+                        this.classList.add('loaded');
+                        placeholder.style.display = 'none';
+                    };
+                    img.onerror = function() {
+                        placeholder.innerHTML = '<i class="fas fa-image"></i>';
+                        placeholder.classList.add('error');
+                        this.style.display = 'none';
+                    };
                 }
-                languages[link.lang].push(link);
-                totalItems++;
             });
             
-            // 渲染每种语言
-            for (const lang in languages) {
-                const title = document.createElement('h2');
-                title.className = 'category-title';
-                title.dataset.lang = lang;
-                
-                // 根据语言显示标题
-                const langTitles = {
-                    'en': 'English',
-                    'zh': '中文',
-                    'ja': '日本語',
-                    'ko': '한국어',
-                    'es': 'Español',
-                    'ar': 'العربية'
-                };
-                title.textContent = langTitles[lang] || lang;
-                
-                container.appendChild(title);
-                
-                languages[lang].forEach((link, index) => {
-                    const card = document.createElement('a');
-                    card.className = 'link-card';
-                    card.href = link.url;
-                    card.target = '_blank';
-                    card.dataset.lang = link.lang;
-                    card.style.animationDelay = `${index * 0.05}s`;
-                    
-                    card.innerHTML = `
-                        <div class="image-container">
-                            <img data-src="${link.image}" alt="${link.title}" class="link-image">
-                            <div class="image-placeholder">
-                                <i class="fas fa-spinner fa-spin"></i>
-                            </div>
-                        </div>
-                        <div class="link-content">
-                            <div class="link-title">${link.title}</div>
-                            <div class="link-desc">${link.desc}</div>
-                        </div>
-                        <i class="fas fa-arrow-right link-arrow"></i>
-                    `;
-                    
-                    container.appendChild(card);
-                    
-                    const img = card.querySelector('.link-image');
-                    if (imageObserver) {
-                        imageObserver.observe(img);
-                    } else {
-                        img.src = link.image;
-                        const placeholder = card.querySelector('.image-placeholder');
-                        img.onload = function() {
-                            this.classList.add('loaded');
-                            placeholder.style.display = 'none';
-                        };
-                        img.onerror = function() {
-                            placeholder.innerHTML = '<i class="fas fa-image"></i>';
-                            placeholder.classList.add('error');
-                            this.style.display = 'none';
-                        };
-                    }
-                });
-            }
-            
             // 如果没有链接，显示提示
-            if (totalItems === 0) {
+            if (filteredLinks.length === 0) {
                 const noLinks = document.createElement('div');
                 noLinks.className = 'no-results';
                 noLinks.innerHTML = `
@@ -999,8 +984,11 @@
             // 初始化图片懒加载
             initImageLazyLoad();
             
-            // 应用默认语言
+            // 应用默认语言（英语）
             applyLanguage('en');
+            
+            // 设置下拉框默认选中英语
+            document.getElementById('languageSelect').value = 'en';
             
             // 加载链接数据
             loadAndRenderLinks();
@@ -1035,30 +1023,24 @@
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', filterLinks);
             
-            // 语言切换
-            const langButtons = document.querySelectorAll('.lang-btn');
-            langButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    langButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    const lang = button.dataset.lang;
-                    
-                    // 设置当前筛选语言
-                    currentFilterLang = lang;
-                    
-                    // 如果是特定语言，也更新界面语言
-                    if (lang !== 'all') {
-                        applyLanguage(lang);
-                    }
-                    
-                    // 重新渲染链接
-                    if (cachedLinksData) {
-                        renderLinks(cachedLinksData);
-                        updateFilterStatus();
-                    } else {
-                        loadAndRenderLinks();
-                    }
-                });
+            // 语言选择下拉框事件
+            const languageSelect = document.getElementById('languageSelect');
+            languageSelect.addEventListener('change', () => {
+                const lang = languageSelect.value;
+                
+                // 设置当前筛选语言
+                currentFilterLang = lang;
+                
+                // 更新界面语言（可选，根据需求）
+                applyLanguage(lang);
+                
+                // 重新渲染链接
+                if (cachedLinksData) {
+                    renderLinks(cachedLinksData);
+                    updateFilterStatus();
+                } else {
+                    loadAndRenderLinks();
+                }
             });
             
             // 缓存控制
