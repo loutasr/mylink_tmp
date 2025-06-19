@@ -14,8 +14,6 @@
     <!-- 关键资源预加载 -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" as="style">
-    <link rel="preload" as="image" href="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
-    <link rel="preload" as="image" href="https://cdn-icons-png.flaticon.com/512/2504/2504919.png">
     
     <!-- 样式表 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,6 +31,7 @@
             --card-shadow: rgba(0, 0, 0, 0.05);
             --border: #e2e8f0;
             --success: #10b981;
+            --warning: #f59e0b;
             --transition: all 0.3s ease;
             --gradient-start: #1a1a2e;
             --gradient-end: #16213e;
@@ -160,34 +159,6 @@
             transform: translateY(-50%);
             color: var(--text-light);
             font-size: 1.1rem;
-        }
-
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .filter-btn {
-            padding: 7px 14px;
-            border-radius: 50px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            color: var(--text-light);
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: var(--transition);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
         }
 
         .links-container {
@@ -533,20 +504,6 @@
                 padding: 18px;
             }
             
-            .filters {
-                gap: 10px;
-            }
-            
-            .filter-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .lang-btn {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-            
             .image-container {
                 width: 80px;
                 height: 80px;
@@ -589,6 +546,35 @@
                 height: 90px;
             }
         }
+        
+        /* 加载更多按钮 */
+        .load-more {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            border-radius: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .load-more:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+        }
+        
+        /* 状态提示 */
+        .status-info {
+            text-align: center;
+            padding: 10px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -609,25 +595,19 @@
             <!-- 语言切换器 -->
             <div class="language-switcher">
                 <button class="lang-btn active" data-lang="all">
-                    <span class="lang-flag">🌐</span> 全部
+                    <span class="lang-flag">🌐</span> <span class="lang-text">全部</span>
                 </button>
                 <button class="lang-btn" data-lang="en">
-                    <span class="lang-flag">🇺🇸</span> English
+                    <span class="lang-flag">🇺🇸</span> <span class="lang-text">English</span>
                 </button>
                 <button class="lang-btn" data-lang="zh">
-                    <span class="lang-flag">🇨🇳</span> 中文
+                    <span class="lang-flag">🇨🇳</span> <span class="lang-text">中文</span>
                 </button>
                 <button class="lang-btn" data-lang="ja">
-                    <span class="lang-flag">🇯🇵</span> 日本語
+                    <span class="lang-flag">🇯🇵</span> <span class="lang-text">日本語</span>
                 </button>
                 <button class="lang-btn" data-lang="ko">
-                    <span class="lang-flag">🇰🇷</span> 한국어
-                </button>
-                <button class="lang-btn" data-lang="es">
-                    <span class="lang-flag">🇪🇸</span> Español
-                </button>
-                <button class="lang-btn" data-lang="ar">
-                    <span class="lang-flag">🇸🇦</span> العربية
+                    <span class="lang-flag">🇰🇷</span> <span class="lang-text">한국어</span>
                 </button>
             </div>
             
@@ -647,6 +627,7 @@
         
         <footer class="footer">
             <p id="footerText">© 2023 影视资源库 | 保留所有权利</p>
+            <p class="status-info">当前版本: v1.2.1 | 数据更新时间: <span id="dataTimestamp">-</span></p>
         </footer>
         
         <div class="performance-indicator" id="perfIndicator">
@@ -656,23 +637,16 @@
     </div>
 
     <script>
-        // ================== 缓存问题解决方案 ================== //
+        // ================== 应用配置 ================== //
+        const APP_VERSION = 'v1.2.1';
+        const DATA_SOURCE = 'https://short.dramashare.com/data.json';
         
-        // 应用版本号 (每次更新时修改此值)
-        const APP_VERSION = 'v1.1.0';
-        
-        // 检查并清除旧缓存
-        if (localStorage.getItem('appVersion') !== APP_VERSION) {
-            console.log('检测到新版本，清除缓存...');
-            localStorage.clear();
-            sessionStorage.clear();
-            
-            // 清除缓存后刷新页面
-            localStorage.setItem('appVersion', APP_VERSION);
-            location.reload(true);
-        } else {
-            localStorage.setItem('appVersion', APP_VERSION);
-        }
+        // ================== 状态管理 ================== //
+        let currentLang = 'zh';
+        let currentFilterLang = 'all';
+        let imageObserver = null;
+        let cachedLinksData = null;
+        let lastDataFetchTime = 0;
         
         // ================== 多语言文本 ================== //
         const translations = {
@@ -683,7 +657,10 @@
                 noResults: "No matching resources found",
                 tryAgain: "Try a different search term",
                 searchPrompt: "Search series to unlock full episodes...",
-                all: "All Languages"
+                all: "All Languages",
+                loadMore: "Load More",
+                statusAll: "All Languages",
+                statusFilter: "Filtered by: "
             },
             zh: {
                 siteTitle: "影视资源库",
@@ -692,7 +669,10 @@
                 noResults: "未找到匹配的资源",
                 tryAgain: "请尝试其他搜索词",
                 searchPrompt: "搜索剧名解锁全集...",
-                all: "所有语言"
+                all: "全部语言",
+                loadMore: "加载更多",
+                statusAll: "所有语言",
+                statusFilter: "筛选语言: "
             },
             ja: {
                 siteTitle: "映画とドラマライブラリ",
@@ -701,7 +681,10 @@
                 noResults: "一致するリソースが見つかりません",
                 tryAgain: "別の検索語を試してください",
                 searchPrompt: "フルエピソードをアンロックするにはシリーズを検索...",
-                all: "すべての言語"
+                all: "すべての言語",
+                loadMore: "さらに読み込む",
+                statusAll: "すべての言語",
+                statusFilter: "フィルター: "
             },
             ko: {
                 siteTitle: "영화 및 드라마 라이브러리",
@@ -710,36 +693,14 @@
                 noResults: "일치하는 리소스를 찾을 수 없습니다",
                 tryAgain: "다른 검색어를 사용해 보세요",
                 searchPrompt: "전체 에피소드를 잠금 해제하려면 시리즈를 검색하세요...",
-                all: "모든 언어"
-            },
-            es: {
-                siteTitle: "Biblioteca de Cine y Drama",
-                siteDescription: "Acceso integral a series populares y recursos cinematográficos",
-                footer: "© 2023 Enlaces de Cine y Drama | Todos los derechos reservados",
-                noResults: "No se encontraron recursos coincidentes",
-                tryAgain: "Intenta con un término de búsqueda diferente",
-                searchPrompt: "Busca series para desbloquear episodios completos...",
-                all: "Todos los idiomas"
-            },
-            ar: {
-                siteTitle: "مكتبة الأفلام والدراما",
-                siteDescription: "وصول شامل للمسلسلات الشعبية وموارد الأفلام",
-                footer: "© 2023 روابط الأفلام والدراما | جميع الحقوق محفوظة",
-                noResults: "لم يتم العثور على موارد مطابقة",
-                tryAgain: "جرب مصطلح بحث مختلف",
-                searchPrompt: "ابحث عن المسلسلات لفتح الحلقات الكاملة...",
-                all: "جميع اللغات"
+                all: "모든 언어",
+                loadMore: "더보기",
+                statusAll: "모든 언어",
+                statusFilter: "필터: "
             }
         };
         
-        // 当前语言
-        let currentLang = 'zh';
-        // 当前筛选的语言
-        let currentFilterLang = 'all';
-        // 图片加载观察器
-        let imageObserver = null;
-        // 数据缓存
-        let cachedLinksData = null;
+        // ================== 核心功能 ================== //
         
         // 应用语言设置
         function applyLanguage(lang) {
@@ -751,15 +712,22 @@
             document.getElementById('siteDescription').textContent = t.siteDescription;
             document.getElementById('searchInput').placeholder = t.searchPrompt;
             document.getElementById('footerText').textContent = t.footer;
+            
+            // 更新"全部"按钮文本
+            document.querySelectorAll('.lang-btn[data-lang="all"] .lang-text').forEach(el => {
+                el.textContent = t.all;
+            });
+            
+            // 更新筛选状态
+            updateFilterStatus();
         }
         
         // 使用自定义域名优化图片
         function optimizeImageUrl(url) {
-            // 如果是相对路径，转换为绝对路径
+            if (!url) return '';
             if (url.startsWith('/')) {
                 return `https://short.dramashare.com${url}?width=200&quality=80`;
             }
-            // 已经是完整URL，直接返回
             return url;
         }
         
@@ -772,7 +740,6 @@
                             const img = entry.target;
                             const placeholder = img.parentNode.querySelector('.image-placeholder');
                             
-                            // 加载图片
                             img.src = img.dataset.src;
                             
                             img.onload = function() {
@@ -795,7 +762,33 @@
             }
         }
         
-        // 加载并渲染链接数据 (添加缓存清除机制)
+        // 更新筛选状态显示
+        function updateFilterStatus() {
+            const statusInfo = document.querySelector('.status-info');
+            if (!statusInfo) return;
+            
+            const t = translations[currentLang];
+            if (currentFilterLang === 'all') {
+                statusInfo.innerHTML = `${t.statusAll} | 数据更新时间: <span id="dataTimestamp">${formatTimestamp(lastDataFetchTime)}</span>`;
+            } else {
+                const langNames = {
+                    'en': 'English',
+                    'zh': '中文',
+                    'ja': '日本語',
+                    'ko': '한국어'
+                };
+                statusInfo.innerHTML = `${t.statusFilter}${langNames[currentFilterLang] || currentFilterLang} | 数据更新时间: <span id="dataTimestamp">${formatTimestamp(lastDataFetchTime)}</span>`;
+            }
+        }
+        
+        // 格式化时间戳
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return '-';
+            const date = new Date(timestamp);
+            return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+        }
+        
+        // 加载并渲染链接数据
         async function loadAndRenderLinks() {
             try {
                 const perfIndicator = document.getElementById('perfIndicator');
@@ -813,7 +806,7 @@
                 
                 // 添加时间戳防止缓存
                 const timestamp = new Date().getTime();
-                const response = await fetch(`data.json?ts=${timestamp}`, {
+                const response = await fetch(`${DATA_SOURCE}?ts=${timestamp}`, {
                     headers: {
                         'Cache-Control': 'no-cache'
                     }
@@ -823,8 +816,10 @@
                 
                 const linksData = await response.json();
                 
-                // 缓存数据
+                // 缓存数据并记录时间
                 cachedLinksData = linksData;
+                lastDataFetchTime = Date.now();
+                updateFilterStatus();
                 
                 const dataLoadTime = performance.now() - startTime;
                 renderLinks(linksData);
@@ -852,13 +847,14 @@
             }
         }
         
-        // 渲染所有链接 (修复语言过滤问题)
+        // 渲染所有链接
         function renderLinks(linksData) {
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
             
             // 按语言分组
             const languages = {};
+            let totalItems = 0;
             
             linksData.forEach(link => {
                 // 应用语言筛选
@@ -868,6 +864,7 @@
                     languages[link.lang] = [];
                 }
                 languages[link.lang].push(link);
+                totalItems++;
             });
             
             // 渲染每种语言
@@ -881,9 +878,7 @@
                     'en': 'English',
                     'zh': '中文',
                     'ja': '日本語',
-                    'ko': '한국어',
-                    'es': 'Español',
-                    'ar': 'العربية'
+                    'ko': '한국어'
                 };
                 title.textContent = langTitles[lang] || lang;
                 
@@ -901,8 +896,7 @@
                     
                     card.innerHTML = `
                         <div class="image-container">
-                            <img data-src="${optimizedImage}" alt="${link.title}" class="link-image"
-                                 data-title="${link.title}">
+                            <img data-src="${optimizedImage}" alt="${link.title}" class="link-image">
                             <div class="image-placeholder">
                                 <i class="fas fa-spinner fa-spin"></i>
                             </div>
@@ -936,11 +930,6 @@
             }
             
             // 如果没有链接，显示提示
-            let totalItems = 0;
-            for (const lang in languages) {
-                totalItems += languages[lang].length;
-            }
-            
             if (totalItems === 0) {
                 const noLinks = document.createElement('div');
                 noLinks.className = 'no-results';
@@ -953,7 +942,7 @@
             }
         }
         
-        // 过滤和搜索功能 (添加防抖优化)
+        // 过滤和搜索功能
         function filterLinks() {
             clearTimeout(window.searchDebounce);
             window.searchDebounce = setTimeout(() => {
@@ -1002,16 +991,16 @@
                 } else if (noResults && visibleItems > 0) {
                     noResults.remove();
                 }
-            }, 300); // 300ms防抖
+            }, 300);
         }
         
-        // 初始加载
+        // ================== 初始化 ================== //
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化图片懒加载
             initImageLazyLoad();
             
             // 应用默认语言
-            applyLanguage('en');
+            applyLanguage('zh');
             
             // 加载链接数据
             loadAndRenderLinks();
@@ -1020,6 +1009,13 @@
             const themeToggle = document.getElementById('themeToggle');
             const body = document.body;
             
+            // 检查本地存储的主题设置
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+            }
+            
             themeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark-mode');
                 
@@ -1027,13 +1023,15 @@
                 if (body.classList.contains('dark-mode')) {
                     icon.classList.remove('fa-moon');
                     icon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
                 } else {
                     icon.classList.remove('fa-sun');
                     icon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
                 }
             });
             
-            // 搜索功能 (带防抖)
+            // 搜索功能
             const searchInput = document.getElementById('searchInput');
             searchInput.addEventListener('input', filterLinks);
             
@@ -1048,14 +1046,30 @@
                     // 设置当前筛选语言
                     currentFilterLang = lang;
                     
+                    // 如果是特定语言，也更新界面语言
+                    if (lang !== 'all') {
+                        applyLanguage(lang);
+                    }
+                    
                     // 重新渲染链接
                     if (cachedLinksData) {
                         renderLinks(cachedLinksData);
+                        updateFilterStatus();
                     } else {
                         loadAndRenderLinks();
                     }
                 });
             });
+            
+            // 缓存控制
+            if (localStorage.getItem('appVersion') !== APP_VERSION) {
+                localStorage.clear();
+                sessionStorage.clear();
+                localStorage.setItem('appVersion', APP_VERSION);
+                console.log('Cleared cache for new version');
+            } else {
+                localStorage.setItem('appVersion', APP_VERSION);
+            }
         });
     </script>
 </body>
