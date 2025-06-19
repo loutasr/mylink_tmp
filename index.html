@@ -661,7 +661,7 @@
         // ============== 性能优化关键修改 ============== //
         
         // 数据版本控制 (更新数据时修改此版本号)
-        const DATA_VERSION = 'v1.0.3';
+        const DATA_VERSION = 'v1.0.4';
         
         // 多语言文本
         const translations = {
@@ -746,7 +746,7 @@
         function optimizeImageUrl(url) {
             // 添加Cloudflare图片优化参数
             // 实际部署时替换为你的域名
-            return url.includes('cdn.example.com') ? 
+            return url.includes('short.dramashare.top') ? 
                 `${url}?width=200&quality=80` : 
                 url;
         }
