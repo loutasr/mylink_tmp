@@ -608,7 +608,10 @@
             
             <!-- 语言切换器 -->
             <div class="language-switcher">
-                <button class="lang-btn active" data-lang="en">
+                <button class="lang-btn active" data-lang="all">
+                    <span class="lang-flag">🌐</span> 全部
+                </button>
+                <button class="lang-btn" data-lang="en">
                     <span class="lang-flag">🇺🇸</span> English
                 </button>
                 <button class="lang-btn" data-lang="zh">
@@ -656,7 +659,7 @@
         // ================== 缓存问题解决方案 ================== //
         
         // 应用版本号 (每次更新时修改此值)
-        const APP_VERSION = 'v1.0.5';
+        const APP_VERSION = 'v1.1.0';
         
         // 检查并清除旧缓存
         if (localStorage.getItem('appVersion') !== APP_VERSION) {
@@ -731,6 +734,8 @@
         
         // 当前语言
         let currentLang = 'zh';
+        // 当前筛选的语言
+        let currentFilterLang = 'all';
         // 图片加载观察器
         let imageObserver = null;
         // 数据缓存
@@ -847,7 +852,7 @@
             }
         }
         
-        // 渲染所有链接
+        // 渲染所有链接 (修复语言过滤问题)
         function renderLinks(linksData) {
             const container = document.getElementById('linksContainer');
             container.innerHTML = '';
@@ -856,6 +861,9 @@
             const languages = {};
             
             linksData.forEach(link => {
+                // 应用语言筛选
+                if (currentFilterLang !== 'all' && link.lang !== currentFilterLang) return;
+                
                 if (!languages[link.lang]) {
                     languages[link.lang] = [];
                 }
@@ -928,7 +936,12 @@
             }
             
             // 如果没有链接，显示提示
-            if (linksData.length === 0) {
+            let totalItems = 0;
+            for (const lang in languages) {
+                totalItems += languages[lang].length;
+            }
+            
+            if (totalItems === 0) {
                 const noLinks = document.createElement('div');
                 noLinks.className = 'no-results';
                 noLinks.innerHTML = `
@@ -1031,8 +1044,16 @@
                     langButtons.forEach(btn => btn.classList.remove('active'));
                     button.classList.add('active');
                     const lang = button.dataset.lang;
-                    applyLanguage(lang);
-                    loadAndRenderLinks();
+                    
+                    // 设置当前筛选语言
+                    currentFilterLang = lang;
+                    
+                    // 重新渲染链接
+                    if (cachedLinksData) {
+                        renderLinks(cachedLinksData);
+                    } else {
+                        loadAndRenderLinks();
+                    }
                 });
             });
         });
